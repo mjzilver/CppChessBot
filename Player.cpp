@@ -29,7 +29,7 @@ bool Player::makeMove(ChessBoard& board, const std::string& moveInput)
         return false;
     }
 
-    if(board.movePiece(fromX, fromY, toX, toY)) {
+    if(board.movePiece(fromX, fromY, toX, toY, isWhite)) {
         return true;
     } else {
         std::cout << "Invalid move. Please try again." << std::endl;

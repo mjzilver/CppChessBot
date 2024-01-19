@@ -4,15 +4,19 @@ class ChessPiece {
 protected:
     int x;
     int y;
-    bool isWhite;
+    const bool isWhite;
 public:
-    ChessPiece(int x, int y, bool isWhite);
+    ChessPiece(int x, int y, bool isWhite) : x(x), y(y), isWhite(isWhite) {};
 
-    int getX() { return x; }
-    int getY() { return y; }
+    int getX() const { return x; }
+    int getY() const { return y; }
 
     void setX(int x) { this->x = x; }
     void setY(int y) { this->y = y; }
 
-    virtual char getSymbol() = 0;
+    virtual char getSymbol() const = 0;
+
+    bool getIsWhite() const { return isWhite; }
+
+    virtual bool canMoveTo(int x, int y) = 0;
 };

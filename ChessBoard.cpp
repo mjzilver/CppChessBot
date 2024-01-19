@@ -88,14 +88,18 @@ ChessPiece* ChessBoard::getPiece(int x, int y) const
     return nullptr;
 }
 
-bool ChessBoard::movePiece(int fromX, int fromY, int toX, int toY)
+bool ChessBoard::movePiece(int fromX, int fromY, int toX, int toY, bool isWhite)
 {
     // Get the piece at the from coordinates
     ChessPiece* piece = getPiece(fromX, fromY);
 
     // validate move
-    if (piece == nullptr)
+    if (piece == nullptr || piece->canMoveTo(toX, toY) == false)
     {
+        return false;
+    }
+
+    if(piece->getIsWhite() != isWhite) {
         return false;
     }
 

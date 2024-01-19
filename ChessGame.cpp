@@ -3,7 +3,7 @@
 #include <iostream>
 
 ChessGame::ChessGame()
-: board(), player1(), player2()
+: board(), player1(true), player2(false)
 {
 
 }
@@ -12,9 +12,9 @@ void ChessGame::startGame()
 {
     board.printBoard();
 
-    while (true)
+    while (board.isGameOver() == false)
     {
-        std::cout << "Player 1's turn" << std::endl;
+        std::cout << "Player 1's turn (white): " << std::endl;
         std::string moveInputPlayer1 = receiveInput();
         while(!player1.makeMove(board, moveInputPlayer1))
         {
@@ -22,7 +22,13 @@ void ChessGame::startGame()
         }
         board.printBoard();
 
-        // player 2 later
+        std::cout << "Player 2's turn (black): " << std::endl;
+        std::string moveInputPlayer2 = receiveInput();
+        while(!player2.makeMove(board, moveInputPlayer2))
+        {
+            moveInputPlayer2 = receiveInput();
+        }
+        board.printBoard();
     }
 }
 

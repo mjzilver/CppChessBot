@@ -11,7 +11,6 @@ set(SOURCE_FILES
     ChessBoard.h
     ChessBoard.cpp
     ChessPiece.h
-    ChessPiece.cpp
     Player.h
     Player.cpp
     ChessGame.h
