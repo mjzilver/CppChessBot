@@ -41,8 +41,6 @@ void ChessBoard::resetBoard()
         pieces.push_back(new Pawn(i, 1, false));
     }
 
-    pieces.push_back(new Pawn(5, 2, true));
-
     // White pieces
     pieces.push_back(new Rook(0, 7, true));
     pieces.push_back(new Knight(1, 7, true));
@@ -84,7 +82,7 @@ void ChessBoard::printBoard()
     std::cout << "  a b c d e f g h" << std::endl;
 }
 
-ChessPiece *ChessBoard::getPiece(int x, int y) const
+ChessPiece* ChessBoard::getPiece(int x, int y) const
 {
     // Error checking
     if (x < 0 || x >= 8 || y < 0 || y >= 8)
@@ -122,7 +120,7 @@ std::string ChessBoard::xyToChessPos(int x, int y) const
 bool ChessBoard::movePiece(int fromX, int fromY, int toX, int toY, bool isWhite)
 {
     // Get the piece at the from coordinates
-    ChessPiece *piece = getPiece(fromX, fromY);
+    ChessPiece* piece = getPiece(fromX, fromY);
 
     // validate move
     if (piece == nullptr)
@@ -138,7 +136,7 @@ bool ChessBoard::movePiece(int fromX, int fromY, int toX, int toY, bool isWhite)
     }
 
     // check if there is a piece at the to coordinates
-    ChessPiece *pieceAtTo = getPiece(toX, toY);
+    ChessPiece* pieceAtTo = getPiece(toX, toY);
     if (pieceAtTo != nullptr)
     {
         // check if the piece at the to coordinates is the same color as the piece at the from coordinates
