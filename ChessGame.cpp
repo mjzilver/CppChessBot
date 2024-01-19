@@ -35,7 +35,7 @@ void ChessGame::startGame()
 std::string ChessGame::receiveInput()
 {
     std::string input;
-    std::cout << "Enter your move (e.g., A2-A4): ";
+    std::cout << "Enter your move:";
     std::cin >> input;
     return input;
 }

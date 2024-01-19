@@ -24,13 +24,13 @@ public:
         return false;
     }
 
-    bool canAttack(int newX, int newY) {
+    bool canAttack(int newX, int newY) override {
         if (newX == x && newY == y) return false;
 
         int direction = isWhite ? 1 : -1;
 
         // Diagonal attack
-        if (std::abs(newX - x) == 1 && newY == y + direction) {
+        if (std::abs(newX - x) == 1 && std::abs(newY - y) == 1 && y - newY == direction) {
             return true;
         }
 

@@ -19,4 +19,6 @@ public:
     bool getIsWhite() const { return isWhite; }
 
     virtual bool canMoveTo(int x, int y) = 0;
+    // only pawns can attack differently than they move so rest uses canMoveTo
+    virtual bool canAttack(int x, int y) { return canMoveTo(x, y); }
 };

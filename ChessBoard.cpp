@@ -1,5 +1,5 @@
 #include "ChessBoard.h"
-#include <iostream> 
+#include <iostream>
 
 #include "ChessPiece.h"
 #include "Pieces/Rook.h"
@@ -9,6 +9,8 @@
 #include "Pieces/King.h"
 #include "Pieces/Pawn.h"
 
+#include <algorithm>
+
 ChessBoard::ChessBoard()
 {
     resetBoard();
@@ -16,6 +18,11 @@ ChessBoard::ChessBoard()
 
 void ChessBoard::resetBoard()
 {
+    for (int i = 0; i < pieces.size(); ++i)
+    {
+        delete pieces[i];
+    }
+
     pieces.clear();
 
     // Set up the board
@@ -29,9 +36,12 @@ void ChessBoard::resetBoard()
     pieces.push_back(new Knight(6, 0, false));
     pieces.push_back(new Rook(7, 0, false));
 
-    for (int i = 0; i < 8; ++i) {
+    for (int i = 0; i < 8; ++i)
+    {
         pieces.push_back(new Pawn(i, 1, false));
     }
+
+    pieces.push_back(new Pawn(5, 2, true));
 
     // White pieces
     pieces.push_back(new Rook(0, 7, true));
@@ -43,7 +53,8 @@ void ChessBoard::resetBoard()
     pieces.push_back(new Knight(6, 7, true));
     pieces.push_back(new Rook(7, 7, true));
 
-    for (int i = 0; i < 8; ++i) {
+    for (int i = 0; i < 8; ++i)
+    {
         pieces.push_back(new Pawn(i, 6, true));
     }
 }
@@ -51,15 +62,19 @@ void ChessBoard::resetBoard()
 void ChessBoard::printBoard()
 {
     // Output the board to the console
-    for (int i = 0; i < 8; ++i) {
+    for (int i = 0; i < 8; ++i)
+    {
         std::cout << 8 - i << ' ';
-        for (int j = 0; j < 8; ++j) {
+        for (int j = 0; j < 8; ++j)
+        {
             auto piece = getPiece(j, i);
-            if (piece == nullptr) {
+            if (piece == nullptr)
+            {
                 // No piece at this location
                 std::cout << ' ';
             }
-            else {
+            else
+            {
                 std::cout << piece->getSymbol();
             }
             std::cout << ' ';
@@ -69,14 +84,14 @@ void ChessBoard::printBoard()
     std::cout << "  a b c d e f g h" << std::endl;
 }
 
-ChessPiece* ChessBoard::getPiece(int x, int y) const
-{   
+ChessPiece *ChessBoard::getPiece(int x, int y) const
+{
     // Error checking
     if (x < 0 || x >= 8 || y < 0 || y >= 8)
     {
         return nullptr;
     }
-    
+
     // loop vector
     for (int i = 0; i < pieces.size(); ++i)
     {
@@ -88,58 +103,69 @@ ChessPiece* ChessBoard::getPiece(int x, int y) const
     return nullptr;
 }
 
+ChessBoard::~ChessBoard()
+{
+    for (int i = 0; i < pieces.size(); ++i)
+    {
+        delete pieces[i];
+    }
+}
+
+std::string ChessBoard::xyToChessPos(int x, int y) const
+{
+    std::string chessPos = "";
+    chessPos += (char)(x + 'A');
+    chessPos += (char)('8' - y);
+    return chessPos;
+}
+
 bool ChessBoard::movePiece(int fromX, int fromY, int toX, int toY, bool isWhite)
 {
     // Get the piece at the from coordinates
-    ChessPiece* piece = getPiece(fromX, fromY);
+    ChessPiece *piece = getPiece(fromX, fromY);
 
     // validate move
-    if (piece == nullptr || piece->canMoveTo(toX, toY) == false)
+    if (piece == nullptr)
     {
+        std::cout << "No piece at position (" << xyToChessPos(fromX, fromY) << ")" << std::endl;
         return false;
     }
 
-    if(piece->getIsWhite() != isWhite) {
+    if (piece->getIsWhite() != isWhite)
+    {
+        std::cout << "Piece at position (" << xyToChessPos(fromX, fromY) << ") is not your color" << std::endl;
         return false;
     }
 
-    // move to new location 
+    // check if there is a piece at the to coordinates
+    ChessPiece *pieceAtTo = getPiece(toX, toY);
+    if (pieceAtTo != nullptr)
+    {
+        // check if the piece at the to coordinates is the same color as the piece at the from coordinates
+        if (pieceAtTo->getIsWhite() == piece->getIsWhite())
+        {
+            std::cout << "Piece at position (" << xyToChessPos(toX, toY) << ") is the same color as the piece at position (" << xyToChessPos(fromX, fromY) << ")" << std::endl;
+            return false;
+        }
+        else if (piece->canAttack(toX, toY))
+        {
+            pieces.erase(std::remove(pieces.begin(), pieces.end(), pieceAtTo), pieces.end());
+        }
+        else
+        {
+            std::cout << "Piece at position (" << xyToChessPos(fromX, fromY) << ") cannot attack the piece at position (" << xyToChessPos(toX, toY) << ")" << std::endl;
+            return false;
+        }
+    }
+    else if (!piece->canMoveTo(toX, toY))
+    {
+        std::cout << "Piece at position (" << xyToChessPos(fromX, fromY) << ") cannot move to position (" << xyToChessPos(toX, toY) << ")" << std::endl;
+        return false;
+    }
+
+    // move to new location
     piece->setX(toX);
-    piece->setY(toY);    
+    piece->setY(toY);
 
     return true;
-}
-
-void ChessBoard::letterToIndex(char letter, int &index)
-{
-    switch (letter)
-    {
-    case 'a':
-        index = 0;
-        break;
-    case 'b':
-        index = 1;
-        break;
-    case 'c':
-        index = 2;
-        break;
-    case 'd':
-        index = 3;
-        break;
-    case 'e':
-        index = 4;
-        break;
-    case 'f':
-        index = 5;
-        break;
-    case 'g':
-        index = 6;
-        break;
-    case 'h':
-        index = 7;
-        break;
-    default:
-        index = -1;
-        break;
-    }
 }
