@@ -7,9 +7,9 @@ class Pawn : public ChessPiece {
 public:
     Pawn(int x, int y, bool isWhite) : ChessPiece(x, y, isWhite) {}
 
-    char getSymbol() const { return isWhite ? 'P' : 'p'; }
+    char getSymbol() const override { return isWhite ? 'P' : 'p'; }
 
-    bool canMoveTo(int newX, int newY) {
+    bool canMoveTo(int newX, int newY) override {
         if (newX == x && newY == y) return false;
 
         int direction = isWhite ? 1 : -1;

@@ -1,5 +1,3 @@
-# CMakeLists.txt
-
 cmake_minimum_required(VERSION 3.12)
 project(ConsoleChess)
 
@@ -25,3 +23,19 @@ set(SOURCE_FILES
 
 # Create the executable
 add_executable(ConsoleChess ${SOURCE_FILES})
+
+# Add Google Test
+add_subdirectory(googletest)
+
+# Add test cpp file
+add_executable(runUnitTests
+    Tests/QueenTest.cpp
+)
+
+# Link test executable against gtest & gtest_main
+target_link_libraries(runUnitTests gtest gtest_main)
+
+# Enable testing
+enable_testing()
+
+add_test(NAME runUnitTests COMMAND runUnitTests)

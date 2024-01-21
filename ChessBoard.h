@@ -18,7 +18,11 @@ public:
     ~ChessBoard();
     void resetBoard();
     void printBoard();
+
     ChessPiece* getPiece(int x, int y) const;
+    void addPiece(ChessPiece* piece) { pieces.push_back(piece); }
+    void emptyBoard() { pieces.clear(); }
+
     bool movePiece(int fromX, int fromY, int toX, int toY, const bool isWhite);
 
     bool isGameOver() const { return _gameOver; }

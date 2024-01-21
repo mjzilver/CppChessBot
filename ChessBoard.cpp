@@ -159,7 +159,7 @@ bool ChessBoard::movePiece(int fromX, int fromY, int toX, int toY, bool isWhite)
     {
         std::cout << "Piece at position (" << xyToChessPos(fromX, fromY) << ") cannot move to position (" << xyToChessPos(toX, toY) << ")" << std::endl;
         return false;
-    }
+    } 
 
     // move to new location
     piece->setX(toX);
