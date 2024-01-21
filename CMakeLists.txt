@@ -30,6 +30,7 @@ add_subdirectory(googletest)
 # Add test cpp file
 add_executable(runUnitTests
     ChessBoard.cpp
+    Player.cpp
     Tests/QueenTest.cpp
     Tests/BishopTest.cpp
     Tests/KnightTest.cpp

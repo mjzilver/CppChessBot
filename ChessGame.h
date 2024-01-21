@@ -3,7 +3,8 @@
 #include "ChessBoard.h"
 #include "Player.h"
 
-class ChessGame {
+class ChessGame
+{
 private:
     ChessBoard board;
     Player player1;

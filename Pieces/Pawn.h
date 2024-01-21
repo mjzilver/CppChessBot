@@ -13,11 +13,11 @@ public:
     bool canMoveTo(int toX, int toY, ChessBoard* board) override {
         if (toX == x && toY == y) return false;
 
-        int direction = isWhite ? 1 : -1;
+        int direction = isWhite ? -1 : 1;
         int distance = hasMoved ? 1 : 2;
 
         // Move forward
-        if (toX == x && abs(toY - y) * direction <= distance) {
+        if (toX == x && (toY == y + direction || toY == y + direction * distance)) {
             hasMoved = true;
             return true;
         }
@@ -28,7 +28,7 @@ public:
     bool canAttack(int toX, int toY) override {
         if (toX == x && toY == y) return false;
 
-        int direction = isWhite ? 1 : -1;
+        int direction = isWhite ? -1 : 1;
         int dx = toX - x;
         int dy = toY - y;
 

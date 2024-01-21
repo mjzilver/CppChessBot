@@ -81,7 +81,7 @@ void ChessBoard::printBoard()
     std::cout << "  a b c d e f g h" << std::endl;
 }
 
-ChessPiece* ChessBoard::getPiece(int x, int y) const
+ChessPiece *ChessBoard::getPiece(int x, int y) const
 {
     // Error checking
     if (x < 0 || x >= 8 || y < 0 || y >= 8)
@@ -111,7 +111,7 @@ ChessBoard::~ChessBoard()
 std::string ChessBoard::xyToChessPos(int x, int y) const
 {
     std::string chessPos = "";
-    chessPos += (char)(x + 'A');
+    chessPos += (char)(x + 'a');
     chessPos += (char)('8' - y);
     return chessPos;
 }
@@ -119,7 +119,7 @@ std::string ChessBoard::xyToChessPos(int x, int y) const
 bool ChessBoard::movePiece(int fromX, int fromY, int toX, int toY, bool isWhite)
 {
     // Get the piece at the from coordinates
-    ChessPiece* piece = getPiece(fromX, fromY);
+    ChessPiece *piece = getPiece(fromX, fromY);
 
     // validate move
     if (piece == nullptr)
@@ -135,7 +135,7 @@ bool ChessBoard::movePiece(int fromX, int fromY, int toX, int toY, bool isWhite)
     }
 
     // check if there is a piece at the to coordinates
-    ChessPiece* pieceAtTo = getPiece(toX, toY);
+    ChessPiece *pieceAtTo = getPiece(toX, toY);
     if (pieceAtTo != nullptr)
     {
         // check if the piece at the to coordinates is the same color as the piece at the from coordinates
@@ -147,6 +147,7 @@ bool ChessBoard::movePiece(int fromX, int fromY, int toX, int toY, bool isWhite)
         else if (piece->canAttack(toX, toY))
         {
             pieces.erase(std::remove(pieces.begin(), pieces.end(), pieceAtTo), pieces.end());
+            delete pieceAtTo;
         }
         else
         {
@@ -158,11 +159,24 @@ bool ChessBoard::movePiece(int fromX, int fromY, int toX, int toY, bool isWhite)
     {
         std::cout << "Piece at position (" << xyToChessPos(fromX, fromY) << ") cannot move to position (" << xyToChessPos(toX, toY) << ")" << std::endl;
         return false;
-    } 
+    }
 
     // move to new location
     piece->setX(toX);
     piece->setY(toY);
 
+    return true;
+}
+
+bool ChessBoard::removePiece(int x, int y)
+{
+    ChessPiece *piece = getPiece(x, y);
+    if (piece == nullptr)
+    {
+        return false;
+    }
+
+    pieces.erase(std::remove(pieces.begin(), pieces.end(), piece), pieces.end());
+    delete piece;
     return true;
 }

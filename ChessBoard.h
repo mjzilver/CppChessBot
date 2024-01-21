@@ -6,13 +6,15 @@
 
 #include <string>
 
-class ChessBoard {
+class ChessBoard
+{
 private:
     char board[8][8];
 
     bool _gameOver = false;
 
-    std::vector<ChessPiece*> pieces = std::vector<ChessPiece*>();
+    std::vector<ChessPiece *> pieces = std::vector<ChessPiece *>();
+
 public:
     ChessBoard();
     ~ChessBoard();
@@ -23,10 +25,11 @@ public:
     void emptyBoard() { pieces.clear(); }
 
     // piece functions
-    ChessPiece* getPiece(int x, int y) const;
-    std::vector<ChessPiece*> getPieces() const { return pieces; }
-    void addPiece(ChessPiece* piece) { pieces.push_back(piece); }
+    ChessPiece *getPiece(int x, int y) const;
+    std::vector<ChessPiece *> getPieces() const { return pieces; }
+    void addPiece(ChessPiece *piece) { pieces.push_back(piece); }
     bool movePiece(int fromX, int fromY, int toX, int toY, const bool isWhite);
+    bool removePiece(int x, int y);
 
     // game functions
     bool isGameOver() const { return _gameOver; }

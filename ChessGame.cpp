@@ -1,9 +1,9 @@
 #include "ChessGame.h"
-
+#include "Pieces/Pawn.h"
 #include <iostream>
 
 ChessGame::ChessGame()
-: board(), player1(true), player2(false)
+    : board(), player1(true), player2(false)
 {
     // set the board
     board.resetBoard();
@@ -17,17 +17,19 @@ void ChessGame::startGame()
     {
         std::cout << "Player 1's turn (white): " << std::endl;
         std::string moveInputPlayer1 = receiveInput();
-        while(!player1.makeMove(board, moveInputPlayer1))
+        while (!player1.makeMove(board, moveInputPlayer1))
         {
             moveInputPlayer1 = receiveInput();
+            board.printBoard();
         }
         board.printBoard();
 
         std::cout << "Player 2's turn (black): " << std::endl;
         std::string moveInputPlayer2 = receiveInput();
-        while(!player2.makeMove(board, moveInputPlayer2))
+        while (!player2.makeMove(board, moveInputPlayer2))
         {
             moveInputPlayer2 = receiveInput();
+            board.printBoard();
         }
         board.printBoard();
     }
