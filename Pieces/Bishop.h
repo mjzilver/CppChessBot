@@ -1,16 +1,33 @@
 #pragma once
 
 #include "../ChessPiece.h"
+#include "../ChessBoard.h"
+
+#include <cmath>
 
 class Bishop : public ChessPiece {
 public:
     Bishop(int x, int y, bool isWhite) : ChessPiece(x, y, isWhite) {}
 
-    char getSymbol() const { return isWhite ? 'B' : 'b'; }
+    char getSymbol() const override { return isWhite ? 'B' : 'b'; }
 
-    bool canMoveTo(int x, int y) {
-        if (x == this->x && y == this->y) return false;
-        if (abs(x - this->x) != abs(y - this->y)) return false;
+    bool canMoveTo(int toX, int toY, ChessBoard* board) override {
+        int dx = toX - x;
+        int dy = toY - y;
+
+        if (dx == 0 || dy == 0) return false;
+        if (abs(dx) != abs(dy)) return false;
+
+        int stepX = dx / abs(dx);
+        int stepY = dy / abs(dy);
+
+        for (int i = 1; i < abs(dx); i++) {
+            int checkX = x + i * stepX;
+            int checkY = y + i * stepY;
+
+            if (board->getPiece(checkX, checkY) != nullptr) return false;
+        }
+
         return true;
     }
 };  

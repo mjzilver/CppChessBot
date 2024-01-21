@@ -29,7 +29,13 @@ add_subdirectory(googletest)
 
 # Add test cpp file
 add_executable(runUnitTests
+    ChessBoard.cpp
     Tests/QueenTest.cpp
+    Tests/BishopTest.cpp
+    Tests/KnightTest.cpp
+    Tests/RookTest.cpp
+    Tests/PawnTest.cpp
+    Tests/KingTest.cpp
 )
 
 # Link test executable against gtest & gtest_main

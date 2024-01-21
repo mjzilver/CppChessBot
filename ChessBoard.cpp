@@ -13,7 +13,6 @@
 
 ChessBoard::ChessBoard()
 {
-    resetBoard();
 }
 
 void ChessBoard::resetBoard()
@@ -155,7 +154,7 @@ bool ChessBoard::movePiece(int fromX, int fromY, int toX, int toY, bool isWhite)
             return false;
         }
     }
-    else if (!piece->canMoveTo(toX, toY))
+    else if (!piece->canMoveTo(toX, toY, this))
     {
         std::cout << "Piece at position (" << xyToChessPos(fromX, fromY) << ") cannot move to position (" << xyToChessPos(toX, toY) << ")" << std::endl;
         return false;

@@ -5,7 +5,8 @@
 ChessGame::ChessGame()
 : board(), player1(true), player2(false)
 {
-
+    // set the board
+    board.resetBoard();
 }
 
 void ChessGame::startGame()
