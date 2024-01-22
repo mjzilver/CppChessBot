@@ -11,8 +11,8 @@ set(SOURCE_FILES
     ChessPiece.h
     ChessGUI.h
     ChessGUI.cpp
-    Player.h
-    Player.cpp
+    UI/ConsoleDisplay.h
+    UI/ConsoleDisplay.cpp
     ChessGame.h
     ChessGame.cpp
     Pieces/Pawn.h
@@ -32,7 +32,6 @@ add_subdirectory(googletest)
 # Add files to be included in testing
 add_executable(runUnitTests
     ChessBoard.cpp
-    Player.cpp
     Tests/QueenTest.cpp
     Tests/BishopTest.cpp
     Tests/KnightTest.cpp

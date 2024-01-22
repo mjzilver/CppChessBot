@@ -2,7 +2,6 @@
 #include "../Pieces/Pawn.h"
 #include "../ChessBoard.h"
 #include "../ChessPiece.h"
-#include "../Player.h"
 
 TEST(PawnTest, CanMoveTo) {
     ChessBoard board;
@@ -74,32 +73,44 @@ TEST(PawnTest, PawnPromotion) {
     ChessBoard board;
 
     // white pawn promotion
-    Player* player = new Player(true);
     Pawn* pawn = new Pawn(0, 1, true);
     board.addPiece(pawn);
-    EXPECT_TRUE(player->makeMove(board, "a7a8Q"));
+    EXPECT_TRUE(board.movePiece(0, 1, 0, 0, true, 'Q'));
     EXPECT_EQ(board.getPiece(0, 1), nullptr);
     EXPECT_EQ(board.getPiece(0, 0)->getSymbol(), 'Q');
 
     // black pawn promotion
-    Player* player2 = new Player(false);
     Pawn* pawn2 = new Pawn(0, 6, false);
     board.addPiece(pawn2);
-    EXPECT_TRUE(player2->makeMove(board, "a2a1Q"));
+    EXPECT_TRUE(board.movePiece(0, 6, 0, 7, false, 'q'));
     EXPECT_EQ(board.getPiece(0, 6), nullptr);
     EXPECT_EQ(board.getPiece(0, 7)->getSymbol(), 'q');
 
-    // invalid promotion
+    // promote to knight
     board.emptyBoard();
     board.addPiece(new Pawn(0, 1, true));
-    EXPECT_FALSE(player->makeMove(board, "a7a8X"));
-    EXPECT_EQ(board.getPiece(0, 1)->getSymbol(), 'P');
-    EXPECT_EQ(board.getPiece(0, 0), nullptr);
+    EXPECT_TRUE(board.movePiece(0, 1, 0, 0, true, 'N'));
+    EXPECT_EQ(board.getPiece(0, 1), nullptr);
+    EXPECT_EQ(board.getPiece(0, 0)->getSymbol(), 'N');
+
+    // promote to bishop
+    board.emptyBoard();
+    board.addPiece(new Pawn(0, 1, true));
+    EXPECT_TRUE(board.movePiece(0, 1, 0, 0, true, 'B'));
+    EXPECT_EQ(board.getPiece(0, 1), nullptr);
+    EXPECT_EQ(board.getPiece(0, 0)->getSymbol(), 'B');
 
     // invalid promotion
     board.emptyBoard();
     board.addPiece(new Pawn(0, 1, true));
-    EXPECT_FALSE(player->makeMove(board, "a7a8"));
+    EXPECT_FALSE(board.movePiece(0, 1, 0, 0, true, 'K'));
     EXPECT_EQ(board.getPiece(0, 1)->getSymbol(), 'P');
     EXPECT_EQ(board.getPiece(0, 0), nullptr);
+
+    // if you dont specify a piece to promote to, it defaults to queen
+    board.emptyBoard();
+    board.addPiece(new Pawn(0, 1, true));
+    EXPECT_TRUE(board.movePiece(0, 1, 0, 0, true));
+    EXPECT_EQ(board.getPiece(0, 1), nullptr);
+    EXPECT_EQ(board.getPiece(0, 0)->getSymbol(), 'Q');
 }

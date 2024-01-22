@@ -167,7 +167,7 @@ void ChessGUI::handleMouseClick(sf::Event::MouseButtonEvent &mouse, ChessBoard &
             if (selectedPiece != nullptr)
             {
                 if(clickedPiece != nullptr) {
-                    if (board.attack(selectedPiece, clickedPiece)) {
+                    if (board.movePiece(selectedPiece->getX(), selectedPiece->getY(), col, row, selectedPiece->getIsWhite())) {
                         selectedPiece = nullptr;
                     } else {
                         selectedPiece = clickedPiece;

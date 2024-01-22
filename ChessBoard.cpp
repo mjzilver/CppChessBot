@@ -1,5 +1,4 @@
 #include "ChessBoard.h"
-#include <iostream>
 
 #include "ChessPiece.h"
 #include "Pieces/Rook.h"
@@ -10,6 +9,7 @@
 #include "Pieces/Pawn.h"
 
 #include <algorithm>
+#include <iostream>
 
 ChessBoard::ChessBoard()
 {
@@ -56,30 +56,6 @@ void ChessBoard::resetBoard()
     }
 }
 
-void ChessBoard::printBoard()
-{
-    // Output the board to the console
-    for (int i = 0; i < 8; ++i)
-    {
-        std::cout << 8 - i << ' ';
-        for (int j = 0; j < 8; ++j)
-        {
-            auto piece = getPiece(j, i);
-            if (piece == nullptr)
-            {
-                // No piece at this location
-                std::cout << ' ';
-            }
-            else
-            {
-                std::cout << piece->getSymbol();
-            }
-            std::cout << ' ';
-        }
-        std::cout << std::endl;
-    }
-    std::cout << "  a b c d e f g h" << std::endl;
-}
 
 ChessPiece *ChessBoard::getPiece(int x, int y) const
 {
@@ -116,21 +92,25 @@ std::string ChessBoard::xyToChessPos(int x, int y) const
     return chessPos;
 }
 
-bool ChessBoard::movePiece(int fromX, int fromY, int toX, int toY, bool isWhite)
+bool ChessBoard::movePiece(int fromX, int fromY, int toX, int toY, bool isWhite, char promoteTo)
 {
+    // if coords are outside of board, return false
+    if (fromX < 0 || fromX >= 8 || fromY < 0 || fromY >= 8 || toX < 0 || toX >= 8 || toY < 0 || toY >= 8)
+    {
+        return false;
+    }
+
     // Get the piece at the from coordinates
     ChessPiece *piece = getPiece(fromX, fromY);
 
     // validate move
     if (piece == nullptr)
     {
-        std::cout << "No piece at position (" << xyToChessPos(fromX, fromY) << ")" << std::endl;
         return false;
     }
 
     if (piece->getIsWhite() != isWhite)
     {
-        std::cout << "Piece at position (" << xyToChessPos(fromX, fromY) << ") is not your color" << std::endl;
         return false;
     }
 
@@ -141,7 +121,6 @@ bool ChessBoard::movePiece(int fromX, int fromY, int toX, int toY, bool isWhite)
         // check if the piece at the to coordinates is the same color as the piece at the from coordinates
         if (pieceAtTo->getIsWhite() == piece->getIsWhite())
         {
-            std::cout << "Piece at position (" << xyToChessPos(toX, toY) << ") is the same color as the piece at position (" << xyToChessPos(fromX, fromY) << ")" << std::endl;
             return false;
         }
         else if (piece->canAttack(toX, toY, this))
@@ -151,48 +130,32 @@ bool ChessBoard::movePiece(int fromX, int fromY, int toX, int toY, bool isWhite)
         }
         else
         {
-            std::cout << "Piece at position (" << xyToChessPos(fromX, fromY) << ") cannot attack the piece at position (" << xyToChessPos(toX, toY) << ")" << std::endl;
             return false;
         }
     }
     else if (!piece->canMoveTo(toX, toY, this))
     {
-        std::cout << "Piece at position (" << xyToChessPos(fromX, fromY) << ") cannot move to position (" << xyToChessPos(toX, toY) << ")" << std::endl;
         return false;
     }
 
-    // move to new location
-    piece->moveTo(toX, toY);
 
-    return true;
-}
-
-bool ChessBoard::attack(ChessPiece* attackingPiece, ChessPiece* attackedPiece) {
-    if (attackingPiece == nullptr || attackedPiece == nullptr)
-    {
-        return false;
-    }
-
-    if (attackingPiece->getIsWhite() == attackedPiece->getIsWhite())
-    {
-        return false;
-    }
-
-    if (attackingPiece->canAttack(attackedPiece->getX(), attackedPiece->getY(), this))
-    {
-        attackingPiece->moveTo(attackedPiece->getX(), attackedPiece->getY());
-        pieces.erase(std::remove(pieces.begin(), pieces.end(), attackedPiece), pieces.end());
-
-        delete attackedPiece;
+    // if pawn reaches end of board, promote to queen
+    if (piece->getSymbol() == 'P' && toY == 0 || piece->getSymbol() == 'p' && toY == 7) {
+        return promotePiece(piece, promoteTo, toX, toY);
+    } else {
+        piece->moveTo(toX, toY);
         return true;
     }
-
-    return false;
 }
 
 bool ChessBoard::removePiece(int x, int y)
 {
     ChessPiece *piece = getPiece(x, y);
+    return removePiece(piece);
+}
+
+bool ChessBoard::removePiece(ChessPiece *piece)
+{
     if (piece == nullptr)
     {
         return false;
@@ -200,5 +163,35 @@ bool ChessBoard::removePiece(int x, int y)
 
     pieces.erase(std::remove(pieces.begin(), pieces.end(), piece), pieces.end());
     delete piece;
+    return true;
+}
+
+bool ChessBoard::promotePiece(ChessPiece *piece, char promoteTo, int toX, int toY)
+{
+    if (piece == nullptr)
+    {
+        return false;
+    }
+
+    switch (toupper(promoteTo))
+    {
+    case 'Q':
+        pieces.push_back(new Queen(toX, toY, piece->getIsWhite()));
+        break;
+    case 'R':
+        pieces.push_back(new Rook(toX, toY, piece->getIsWhite()));
+        break;
+    case 'B':
+        pieces.push_back(new Bishop(toX, toY, piece->getIsWhite()));
+        break;
+    case 'N':   
+        pieces.push_back(new Knight(toX, toY, piece->getIsWhite()));
+        break;
+    default:
+        return false;
+    }
+
+    removePiece(piece);
+
     return true;
 }
