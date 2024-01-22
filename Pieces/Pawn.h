@@ -21,7 +21,9 @@ public:
     bool canMoveTo(int toX, int toY, const ChessBoard* board) override
     {
         if (!ChessPiece::canMoveTo(toX, toY, board)) return false;
-
+        // Check if blocked (cant move or attack forward)
+        if (board->getPiece(toX, toY) != nullptr)
+            return false;
         int direction = isWhite ? -1 : 1;
 
         // Move forward 1
@@ -45,8 +47,6 @@ public:
 
     bool canAttack(int toX, int toY, const ChessBoard* board) override
     {
-        if (!ChessPiece::canMoveTo(toX, toY, board)) return false;
-
         int direction = isWhite ? -1 : 1;
         int dx = toX - x;
         int dy = toY - y;

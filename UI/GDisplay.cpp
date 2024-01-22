@@ -85,7 +85,14 @@ void GDisplay::drawBoard(const ChessBoard &board)
             // if selected piece is not null, draw possible moves
             if (selectedPiece != nullptr)
             {
-                if (selectedPiece->canMoveTo(j, i, &board))
+                if (board.getPiece(j, i) != nullptr && selectedPiece->canAttack(j, i, &board))
+                {
+                    sf::RectangleShape square(sf::Vector2f(squareSize, squareSize));
+                    square.setPosition(j * squareSize + margin, i * squareSize);
+                    square.setFillColor(sf::Color(255, 0, 0, 100));
+                    window.draw(square);
+                }
+                else if (selectedPiece->canMoveTo(j, i, &board))
                 {
                     sf::CircleShape circle(squareSize / 4);
                     circle.setPosition(j * squareSize + margin + squareSize / 4, i * squareSize + squareSize / 4);
@@ -115,7 +122,7 @@ void GDisplay::drawBoard(const ChessBoard &board)
                         const float offset = (squareSize * (1 - circleFraction)) / 2;
 
                         sf::CircleShape border(radius);
-                        border.setPosition(j * squareSize + margin + offset, i * squareSize + offset); 
+                        border.setPosition(j * squareSize + margin + offset, i * squareSize + offset);
                         border.setFillColor(sf::Color::Transparent);
                         border.setOutlineThickness(4);
                         border.setOutlineColor(sf::Color(0, 0, 255, 100));
