@@ -9,6 +9,14 @@ GDisplay::GDisplay() : window(sf::VideoMode(500u, 500u), "Chess Game"), squareSi
     {
         std::cerr << "Error loading font" << std::endl;
     }
+
+    window.setView(window.getDefaultView());
+    window.setFramerateLimit(60);
+    window.setKeyRepeatEnabled(false);
+    window.setMouseCursorVisible(true);
+    window.setActive(true);
+    window.clear();
+    window.display();
 }
 
 GDisplay::~GDisplay()
@@ -20,13 +28,18 @@ void GDisplay::drawLoop(ChessBoard &board)
 {
     while (window.isOpen())
     {
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            handleEvent(event, board);
-        }
+        handleInput(board);
 
         drawBoard(board);
+    }
+}
+
+void GDisplay::handleInput(ChessBoard &board)
+{
+    sf::Event event;
+    while (window.pollEvent(event))
+    {
+        handleEvent(event, board);
     }
 }
 
@@ -70,8 +83,10 @@ void GDisplay::drawBoard(const ChessBoard &board)
             window.draw(square);
 
             // if selected piece is not null, draw possible moves
-            if(selectedPiece != nullptr) {
-                if(selectedPiece->canMoveTo(j, i, &board)) {
+            if (selectedPiece != nullptr)
+            {
+                if (selectedPiece->canMoveTo(j, i, &board))
+                {
                     sf::CircleShape circle(squareSize / 4);
                     circle.setPosition(j * squareSize + margin + squareSize / 4, i * squareSize + squareSize / 4);
                     circle.setFillColor(sf::Color(0, 255, 0, 100));
@@ -92,13 +107,18 @@ void GDisplay::drawBoard(const ChessBoard &board)
                 auto it = pieceTextures.find(pieceSymbol);
                 if (it != pieceTextures.end())
                 {
-                    // draw a border around the selected piece
-                    if(selectedPiece != nullptr && piece == selectedPiece) {
-                        sf::CircleShape border(squareSize / 2);
-                        border.setPosition(j * squareSize + margin, i * squareSize);
+                    // draw a circle around the selected piece
+                    if (selectedPiece != nullptr && piece == selectedPiece)
+                    {
+                        const float circleFraction = 8.0 / 10.0;
+                        const float radius = circleFraction * (squareSize / 2);
+                        const float offset = (squareSize * (1 - circleFraction)) / 2;
+
+                        sf::CircleShape border(radius);
+                        border.setPosition(j * squareSize + margin + offset, i * squareSize + offset); 
                         border.setFillColor(sf::Color::Transparent);
-                        border.setOutlineThickness(2);
-                        border.setOutlineColor(sf::Color::Black);
+                        border.setOutlineThickness(4);
+                        border.setOutlineColor(sf::Color(0, 0, 255, 100));
                         window.draw(border);
                     }
 
@@ -123,8 +143,7 @@ void GDisplay::loadPieceTextures(std::map<char, sf::Texture> &pieceTextures) con
 
     // Define the pieces and their corresponding filenames
     std::map<char, std::string> pieceFilenames = {
-        {'P', "WP.png"}, {'N', "WN.png"}, {'B', "WB.png"}, {'R', "WR.png"}, {'Q', "WQ.png"}, {'K', "WK.png"}, 
-        {'p', "BP.png"}, {'n', "BN.png"}, {'b', "BB.png"}, {'r', "BR.png"}, {'q', "BQ.png"}, {'k', "BK.png"}};
+        {'P', "WP.png"}, {'N', "WN.png"}, {'B', "WB.png"}, {'R', "WR.png"}, {'Q', "WQ.png"}, {'K', "WK.png"}, {'p', "BP.png"}, {'n', "BN.png"}, {'b', "BB.png"}, {'r', "BR.png"}, {'q', "BQ.png"}, {'k', "BK.png"}};
 
     for (const auto &entry : pieceFilenames)
     {
@@ -177,21 +196,30 @@ void GDisplay::handleMouseClick(sf::Event::MouseButtonEvent &mouse, ChessBoard &
             if (selectedPiece != nullptr)
             {
                 // clicked on a piece
-                if(clickedPiece != nullptr) {
-                    if (board.movePiece(selectedPiece->getX(), selectedPiece->getY(), col, row, selectedPiece->getIsWhite())) {
+                if (clickedPiece != nullptr)
+                {
+                    if (board.movePiece(selectedPiece->getX(), selectedPiece->getY(), col, row, selectedPiece->getIsWhite()))
+                    {
                         selectedPiece = nullptr;
-                    } else {
+                    }
+                    else
+                    {
                         selectedPiece = clickedPiece;
                     }
-                } 
+                }
                 // clicked on an empty square
-                else if(selectedPiece->canMoveTo(col, row, &board)) {
+                else if (selectedPiece->canMoveTo(col, row, &board))
+                {
                     board.movePiece(selectedPiece->getX(), selectedPiece->getY(), col, row, selectedPiece->getIsWhite());
                     selectedPiece = nullptr;
-                } else {
+                }
+                else
+                {
                     selectedPiece = nullptr;
                 }
-            } else {
+            }
+            else
+            {
                 selectedPiece = board.getPiece(col, row);
             }
         }

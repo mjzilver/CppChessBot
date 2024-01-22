@@ -20,22 +20,16 @@ ChessGame::~ChessGame()
 
 void ChessGame::startGame(bool with_gui)
 {
-    std::thread* guiThread = nullptr;
+    IDisplay* display;
 
     if (with_gui)
     {
-        gDisplay = new GDisplay();
-        guiThread = new std::thread(&GDisplay::drawLoop, gDisplay, std::ref(board));   
-    } 
-
-    IDisplay* display = new ConsoleDisplay();
-    
-    while(board.isGameOver() == false)
-    {
-        display->drawLoop(board);
+        display = new GDisplay();
+    } else {
+        display = new ConsoleDisplay();
     }
 
+    display->drawLoop(board);
+
     std::cout << "Game over!" << std::endl;
-    guiThread->join();
-    delete guiThread;
 }

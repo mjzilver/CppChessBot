@@ -14,6 +14,7 @@ public:
 
     void drawBoard(const ChessBoard &board) override;
     void drawLoop(ChessBoard &board) override;
+    void handleInput(ChessBoard &board) override;
 
 private:
     sf::RenderWindow window;

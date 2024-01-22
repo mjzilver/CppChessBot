@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
-project(ConsoleChess)
+project(CppChess)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -25,7 +25,7 @@ set(SOURCE_FILES
 )
 
 # Create the executable
-add_executable(ConsoleChess ${SOURCE_FILES})
+add_executable(CppChess ${SOURCE_FILES})
 
 # Add Google Test
 add_subdirectory(googletest)
@@ -42,10 +42,12 @@ add_executable(runUnitTests
     Tests/KingTest.cpp
 )
 
+find_package(SFML COMPONENTS graphics REQUIRED)
+
 # link gtest to test executable
 target_link_libraries(runUnitTests gtest gtest_main)
 # link SFML to main executable
-target_link_libraries(ConsoleChess sfml-graphics sfml-window sfml-system)
+target_link_libraries(CppChess sfml-graphics sfml-window sfml-system)
 
 # Enable testing
 enable_testing()
