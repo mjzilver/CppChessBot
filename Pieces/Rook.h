@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../ChessPiece.h"
 #include "../ChessBoard.h"
+#include "../ChessPiece.h"
 
 class Rook : public ChessPiece {
 public:
@@ -28,6 +28,6 @@ public:
             if (board->getPiece(checkX, checkY) != nullptr) return false;
         }
 
-        return true;   
+        return true;
     }
 };

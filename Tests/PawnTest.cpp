@@ -1,11 +1,11 @@
-#include "gtest/gtest.h"
-#include "../Pieces/Pawn.h"
 #include "../ChessBoard.h"
 #include "../ChessPiece.h"
+#include "../Pieces/Pawn.h"
+#include "gtest/gtest.h"
 
 TEST(PawnTest, CanMoveTo) {
     ChessBoard board;
-    Pawn* pawn = new Pawn(4, 4, true); 
+    Pawn* pawn = new Pawn(4, 4, true);
     board.addPiece(pawn);
 
     // white can only move into negative y direction
@@ -24,7 +24,7 @@ TEST(PawnTest, CanMoveTo) {
 
 TEST(PawnTest, CanMoveTwoSquares) {
     ChessBoard board;
-    Pawn* pawn = new Pawn(4, 4, true); 
+    Pawn* pawn = new Pawn(4, 4, true);
     board.addPiece(pawn);
 
     // white can only move into negative y direction
@@ -39,7 +39,7 @@ TEST(PawnTest, CanMoveTwoSquares) {
 
 TEST(PawnTest, CanMoveToBlocked) {
     ChessBoard board;
-    Pawn* pawn = new Pawn(4, 4, true); 
+    Pawn* pawn = new Pawn(4, 4, true);
     board.addPiece(pawn);
 
     board.addPiece(new Pawn(4, 5, true));
@@ -49,10 +49,10 @@ TEST(PawnTest, CanMoveToBlocked) {
 
 TEST(PawnTest, CanAttackDiagonally) {
     ChessBoard board;
-    Pawn* pawn = new Pawn(4, 4, true); 
+    Pawn* pawn = new Pawn(4, 4, true);
     board.addPiece(pawn);
 
-        // Test white pawn attacking diagonally
+    // Test white pawn attacking diagonally
     EXPECT_TRUE(pawn->canAttack(5, 3, &board));
     EXPECT_TRUE(pawn->canAttack(3, 3, &board));
 

@@ -1,13 +1,13 @@
 #pragma once
 
-#include "../ChessBoard.h"
-#include "../ChessPiece.h"
-#include "IDisplay.h"
 #include <SFML/Graphics.hpp>
 #include <map>
 
-class GDisplay : public IDisplay
-{
+#include "../ChessBoard.h"
+#include "../ChessPiece.h"
+#include "IDisplay.h"
+
+class GDisplay : public IDisplay {
 public:
     GDisplay();
     ~GDisplay();
@@ -22,7 +22,7 @@ private:
     int margin;
     std::map<char, sf::Texture> pieceTextures;
     sf::Font font;
-    ChessPiece* selectedPiece = nullptr;
+    ChessPiece *selectedPiece = nullptr;
     bool isCurrentPlayerWhite = true;
 
     void loadPieceTextures(std::map<char, sf::Texture> &pieceTextures) const;

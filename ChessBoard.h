@@ -1,13 +1,11 @@
 #pragma once
 
+#include <string>
 #include <vector>
 
 #include "ChessPiece.h"
 
-#include <string>
-
-class ChessBoard
-{
+class ChessBoard {
 private:
     char board[8][8];
 
@@ -21,10 +19,8 @@ public:
 
     // board functions
     void resetBoard();
-    void emptyBoard()
-    {
-        for (int i = 0; i < pieces.size(); ++i)
-        {
+    void emptyBoard() {
+        for (int i = 0; i < pieces.size(); ++i) {
             delete pieces[i];
         }
         pieces.clear();

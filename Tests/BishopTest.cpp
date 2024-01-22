@@ -1,12 +1,12 @@
-#include "gtest/gtest.h"
-#include "../Pieces/Bishop.h"
-#include "../Pieces/Pawn.h"
 #include "../ChessBoard.h"
 #include "../ChessPiece.h"
+#include "../Pieces/Bishop.h"
+#include "../Pieces/Pawn.h"
+#include "gtest/gtest.h"
 
 TEST(BishopTest, CanMoveTo) {
     ChessBoard board;
-    Bishop* bishop = new Bishop(4, 4, true); 
+    Bishop* bishop = new Bishop(4, 4, true);
     board.addPiece(bishop);
 
     // Test movement diagonally
@@ -27,7 +27,7 @@ TEST(BishopTest, CanMoveTo) {
 
 TEST(BishopTest, CanMoveToBlocked) {
     ChessBoard board;
-    Bishop* bishop = new Bishop(4, 4, true); 
+    Bishop* bishop = new Bishop(4, 4, true);
     board.addPiece(bishop);
 
     // Test movement diagonally

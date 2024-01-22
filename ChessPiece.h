@@ -1,9 +1,8 @@
 #pragma once
 
-class ChessBoard; // forward declaration
+class ChessBoard;  // forward declaration
 
-class ChessPiece
-{
+class ChessPiece {
 protected:
     int x;
     int y;

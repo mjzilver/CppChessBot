@@ -1,12 +1,12 @@
-#include "gtest/gtest.h"
-#include "../Pieces/Rook.h"
-#include "../Pieces/Pawn.h"
 #include "../ChessBoard.h"
 #include "../ChessPiece.h"
+#include "../Pieces/Pawn.h"
+#include "../Pieces/Rook.h"
+#include "gtest/gtest.h"
 
 TEST(RookTest, CanMoveTo) {
     ChessBoard board;
-    Rook* rook = new Rook(4, 4, true); 
+    Rook* rook = new Rook(4, 4, true);
     board.addPiece(rook);
 
     // Test movement in a straight line
@@ -24,7 +24,7 @@ TEST(RookTest, CanMoveTo) {
 
 TEST(RookTest, CanMoveToBlocked) {
     ChessBoard board;
-    Rook* rook = new Rook(4, 4, true); 
+    Rook* rook = new Rook(4, 4, true);
     board.addPiece(rook);
 
     // Test movement in a straight line

@@ -1,11 +1,11 @@
-#include "gtest/gtest.h"
-#include "../Pieces/Knight.h"
 #include "../ChessBoard.h"
 #include "../ChessPiece.h"
+#include "../Pieces/Knight.h"
+#include "gtest/gtest.h"
 
 TEST(KnightTest, CanMoveTo) {
     ChessBoard board;
-    Knight* knight = new Knight(4, 4, true); 
+    Knight* knight = new Knight(4, 4, true);
     board.addPiece(knight);
 
     // Test movement in an L shape

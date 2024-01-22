@@ -1,12 +1,12 @@
-#include "gtest/gtest.h"
-#include "../Pieces/Queen.h"
-#include "../Pieces/Pawn.h"
 #include "../ChessBoard.h"
 #include "../ChessPiece.h"
+#include "../Pieces/Pawn.h"
+#include "../Pieces/Queen.h"
+#include "gtest/gtest.h"
 
 TEST(QueenTest, CanMoveTo) {
     ChessBoard board;
-    Queen* queen = new Queen(4, 4, true); 
+    Queen* queen = new Queen(4, 4, true);
     board.addPiece(queen);
 
     // Test movement in a straight line
@@ -30,7 +30,7 @@ TEST(QueenTest, CanMoveTo) {
 
 TEST(QueenTest, CanMoveToBlocked) {
     ChessBoard board;
-    Queen* queen = new Queen(4, 4, true); 
+    Queen* queen = new Queen(4, 4, true);
     board.addPiece(queen);
 
     // Test movement in a straight line

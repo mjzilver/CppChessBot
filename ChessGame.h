@@ -1,14 +1,14 @@
 #pragma once
 
 #include "ChessBoard.h"
-#include "UI/GDisplay.h"
 #include "UI/ConsoleDisplay.h"
+#include "UI/GDisplay.h"
 
-class ChessGame
-{
+class ChessGame {
 private:
     ChessBoard board;
     GDisplay* gDisplay;
+
 public:
     ChessGame();
     ~ChessGame();

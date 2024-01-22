@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../ChessPiece.h"
-#include "../ChessBoard.h"
-
 #include <cmath>
+
+#include "../ChessBoard.h"
+#include "../ChessPiece.h"
 
 class Knight : public ChessPiece {
 public:

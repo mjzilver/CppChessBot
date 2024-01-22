@@ -1,7 +1,8 @@
 #pragma once
 
-#include "../ChessBoard.h"
 #include <string>
+
+#include "../ChessBoard.h"
 
 class IDisplay {
 public:

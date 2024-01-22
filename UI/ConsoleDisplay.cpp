@@ -2,21 +2,15 @@
 
 #include <iostream>
 
-void ConsoleDisplay::drawBoard(const ChessBoard &board)
-{
-    for (int i = 0; i < 8; ++i)
-    {
+void ConsoleDisplay::drawBoard(const ChessBoard &board) {
+    for (int i = 0; i < 8; ++i) {
         std::cout << 8 - i << ' ';
-        for (int j = 0; j < 8; ++j)
-        {
+        for (int j = 0; j < 8; ++j) {
             auto piece = board.getPiece(j, i);
-            if (piece == nullptr)
-            {
+            if (piece == nullptr) {
                 // No piece at this location
                 std::cout << ' ';
-            }
-            else
-            {
+            } else {
                 std::cout << piece->getSymbol();
             }
             std::cout << ' ';
@@ -26,27 +20,23 @@ void ConsoleDisplay::drawBoard(const ChessBoard &board)
     std::cout << "  a b c d e f g h" << std::endl;
 }
 
-std::string ConsoleDisplay::receiveInput()
-{
+std::string ConsoleDisplay::receiveInput() {
     std::string input;
     std::cin >> input;
     return input;
 }
 
-void ConsoleDisplay::drawLoop(ChessBoard &board)
-{
-    while (board.isGameOver() == false)
-    {
+void ConsoleDisplay::drawLoop(ChessBoard &board) {
+    while (board.isGameOver() == false) {
         handleInput(board);
     }
 
     std::cout << "Game over!" << std::endl;
 }
 
-bool ConsoleDisplay::makeMove(ChessBoard &board, const std::string &moveInput, bool isWhite)
-{
-    if ((moveInput.size() < 4 || moveInput.size() > 5) || !isalpha(moveInput[0]) || !isdigit(moveInput[1]) || !isalpha(moveInput[2]) || !isdigit(moveInput[3]))
-    {
+bool ConsoleDisplay::makeMove(ChessBoard &board, const std::string &moveInput, bool isWhite) {
+    if ((moveInput.size() < 4 || moveInput.size() > 5) || !isalpha(moveInput[0]) || !isdigit(moveInput[1]) ||
+        !isalpha(moveInput[2]) || !isdigit(moveInput[3])) {
         std::cout << "Invalid move format. Please use the format 'a2a4'." << std::endl;
         return false;
     }
@@ -57,24 +47,19 @@ bool ConsoleDisplay::makeMove(ChessBoard &board, const std::string &moveInput, b
     int toX = tolower(moveInput[2]) - 'a';
     int toY = '8' - moveInput[3];
 
-    if (board.movePiece(fromX, fromY, toX, toY, isWhite, moveInput.size() == 5 ? moveInput[4] : 'Q'))
-    {
+    if (board.movePiece(fromX, fromY, toX, toY, isWhite, moveInput.size() == 5 ? moveInput[4] : 'Q')) {
         return true;
-    }
-    else
-    {
+    } else {
         std::cout << "Invalid move. Please try again." << std::endl;
         return false;
     }
 }
 
-void ConsoleDisplay::handleInput(ChessBoard &board)
-{
+void ConsoleDisplay::handleInput(ChessBoard &board) {
     drawBoard(board);
     std::cout << "Player 1's turn (white): " << std::endl;
     std::string moveInputPlayer1 = receiveInput();
-    while (!makeMove(board, moveInputPlayer1, true))
-    {
+    while (!makeMove(board, moveInputPlayer1, true)) {
         moveInputPlayer1 = receiveInput();
         drawBoard(board);
     }
@@ -82,8 +67,7 @@ void ConsoleDisplay::handleInput(ChessBoard &board)
 
     std::cout << "Player 2's turn (black): " << std::endl;
     std::string moveInputPlayer2 = receiveInput();
-    while (!makeMove(board, moveInputPlayer2, false))
-    {
+    while (!makeMove(board, moveInputPlayer2, false)) {
         moveInputPlayer2 = receiveInput();
         drawBoard(board);
     }

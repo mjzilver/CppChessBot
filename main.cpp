@@ -1,6 +1,6 @@
-#include "ChessGame.h"
-
 #include <string>
+
+#include "ChessGame.h"
 
 int main(int argc, char* argv[]) {
     bool useGui = false;

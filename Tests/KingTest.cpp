@@ -1,10 +1,10 @@
-#include "gtest/gtest.h"
+#include "../ChessBoard.h"
+#include "../ChessPiece.h"
 #include "../Pieces/King.h"
 #include "../Pieces/Pawn.h"
 #include "../Pieces/Queen.h"
 #include "../Pieces/Rook.h"
-#include "../ChessBoard.h"
-#include "../ChessPiece.h"
+#include "gtest/gtest.h"
 
 TEST(KingTest, CanMoveTo) {
     ChessBoard board;
@@ -50,8 +50,7 @@ TEST(KingTest, CanMoveToBlocking) {
     board.removePiece(5, 3);
 }
 
-TEST(KingTest, CantMoveToEnemyLineOfSight)
-{
+TEST(KingTest, CantMoveToEnemyLineOfSight) {
     ChessBoard board;
     King* king = new King(4, 4, true);
     board.addPiece(king);
