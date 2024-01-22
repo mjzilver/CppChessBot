@@ -144,7 +144,7 @@ bool ChessBoard::movePiece(int fromX, int fromY, int toX, int toY, bool isWhite)
             std::cout << "Piece at position (" << xyToChessPos(toX, toY) << ") is the same color as the piece at position (" << xyToChessPos(fromX, fromY) << ")" << std::endl;
             return false;
         }
-        else if (piece->canAttack(toX, toY))
+        else if (piece->canAttack(toX, toY, this))
         {
             pieces.erase(std::remove(pieces.begin(), pieces.end(), pieceAtTo), pieces.end());
             delete pieceAtTo;
@@ -165,6 +165,29 @@ bool ChessBoard::movePiece(int fromX, int fromY, int toX, int toY, bool isWhite)
     piece->moveTo(toX, toY);
 
     return true;
+}
+
+bool ChessBoard::attack(ChessPiece* attackingPiece, ChessPiece* attackedPiece) {
+    if (attackingPiece == nullptr || attackedPiece == nullptr)
+    {
+        return false;
+    }
+
+    if (attackingPiece->getIsWhite() == attackedPiece->getIsWhite())
+    {
+        return false;
+    }
+
+    if (attackingPiece->canAttack(attackedPiece->getX(), attackedPiece->getY(), this))
+    {
+        attackingPiece->moveTo(attackedPiece->getX(), attackedPiece->getY());
+        pieces.erase(std::remove(pieces.begin(), pieces.end(), attackedPiece), pieces.end());
+
+        delete attackedPiece;
+        return true;
+    }
+
+    return false;
 }
 
 bool ChessBoard::removePiece(int x, int y)

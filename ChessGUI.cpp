@@ -82,6 +82,16 @@ void ChessGUI::drawBoard(ChessBoard &board)
                 auto it = pieceTextures.find(pieceSymbol);
                 if (it != pieceTextures.end())
                 {
+                    // draw a border around the selected piece
+                    if(selectedPiece != nullptr && piece == selectedPiece) {
+                        sf::CircleShape border(squareSize / 2);
+                        border.setPosition(j * squareSize + margin, i * squareSize);
+                        border.setFillColor(sf::Color::Transparent);
+                        border.setOutlineThickness(2);
+                        border.setOutlineColor(sf::Color::Black);
+                        window.draw(border);
+                    }
+
                     sf::Sprite pieceSprite(it->second);
                     pieceSprite.setPosition(j * squareSize + margin, i * squareSize);
                     window.draw(pieceSprite);
@@ -153,10 +163,19 @@ void ChessGUI::handleMouseClick(sf::Event::MouseButtonEvent &mouse, ChessBoard &
 
         if (col >= 0 && col < 8 && row >= 0 && row < 8)
         {
+            auto clickedPiece = board.getPiece(col, row);
             if (selectedPiece != nullptr)
             {
-                if(selectedPiece->canMoveTo(col, row, &board)) {
+                if(clickedPiece != nullptr) {
+                    if (board.attack(selectedPiece, clickedPiece)) {
+                        selectedPiece = nullptr;
+                    } else {
+                        selectedPiece = clickedPiece;
+                    }
+                } else if(selectedPiece->canMoveTo(col, row, &board)) {
                     board.movePiece(selectedPiece->getX(), selectedPiece->getY(), col, row, selectedPiece->getIsWhite());
+                    selectedPiece = nullptr;
+                } else {
                     selectedPiece = nullptr;
                 }
             } else {

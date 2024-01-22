@@ -53,9 +53,21 @@ TEST(PawnTest, CanAttackDiagonally) {
     Pawn* pawn = new Pawn(4, 4, true); 
     board.addPiece(pawn);
 
-    board.addPiece(new Pawn(5, 5, false));
-    EXPECT_TRUE(pawn->canAttack(5, 5));
-    board.emptyBoard();
+        // Test white pawn attacking diagonally
+    EXPECT_TRUE(pawn->canAttack(5, 3, &board));
+    EXPECT_TRUE(pawn->canAttack(3, 3, &board));
+
+    // Test black pawn attacking diagonally
+    pawn = new Pawn(4, 4, false);
+    board.addPiece(pawn);
+    EXPECT_TRUE(pawn->canAttack(5, 5, &board));
+    EXPECT_TRUE(pawn->canAttack(3, 5, &board));
+
+    // Ensure pawns cannot attack vertically or horizontally
+    EXPECT_FALSE(pawn->canAttack(4, 3, &board));
+    EXPECT_FALSE(pawn->canAttack(4, 5, &board));
+    EXPECT_FALSE(pawn->canAttack(5, 4, &board));
+    EXPECT_FALSE(pawn->canAttack(3, 4, &board));
 }
 
 TEST(PawnTest, PawnPromotion) {

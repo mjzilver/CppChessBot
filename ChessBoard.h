@@ -36,6 +36,7 @@ public:
     std::vector<ChessPiece *> getPieces() const { return pieces; }
     void addPiece(ChessPiece *piece) { pieces.push_back(piece); }
     bool movePiece(int fromX, int fromY, int toX, int toY, const bool isWhite);
+    bool attack(ChessPiece *attackingPiece, ChessPiece *attackedPiece);
     bool removePiece(int x, int y);
 
     // game functions

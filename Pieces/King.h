@@ -18,7 +18,7 @@ public:
 
         for (int i = 0; i < board->getPieces().size(); i++) {
             if (board->getPieces()[i]->getIsWhite() != isWhite) {
-                if (board->getPieces()[i]->canMoveTo(toX, toY, board)) return false;
+                if (board->getPieces()[i]->canAttack(toX, toY, board)) return false;
             }
         }
 

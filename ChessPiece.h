@@ -27,7 +27,7 @@ public:
 
     virtual bool canMoveTo(int x, int y, ChessBoard *board) = 0;
     // only pawns can attack differently than they move so rest uses canMoveTo
-    virtual bool canAttack(int x, int y) { return canMoveTo(x, y, nullptr); }
+    virtual bool canAttack(int x, int y, ChessBoard *board) { return canMoveTo(x, y, board); }
 
     virtual ~ChessPiece() = default;
 };
