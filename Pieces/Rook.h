@@ -9,8 +9,8 @@ public:
 
     char getSymbol() const override { return isWhite ? 'R' : 'r'; }
 
-    bool canMoveTo(int toX, int toY, ChessBoard* board) override {
-        if (toX == x && toY == y) return false;
+    bool canMoveTo(int toX, int toY, const ChessBoard* board) override {
+        if (!ChessPiece::canMoveTo(toX, toY, board)) return false;
         if (toX != x && toY != y) return false;
 
         int dx = toX - x;

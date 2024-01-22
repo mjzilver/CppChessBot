@@ -11,7 +11,9 @@ public:
 
     char getSymbol() const override { return isWhite ? 'B' : 'b'; }
 
-    bool canMoveTo(int toX, int toY, ChessBoard* board) override {
+    bool canMoveTo(int toX, int toY, const ChessBoard* board) override {
+        if (!ChessPiece::canMoveTo(toX, toY, board)) return false;
+
         int dx = toX - x;
         int dy = toY - y;
 

@@ -10,7 +10,7 @@ protected:
     const bool isWhite;
 
 public:
-    ChessPiece(int x, int y, bool isWhite) : x(x), y(y), isWhite(isWhite){};
+    ChessPiece(int x, int y, bool isWhite);
 
     int getX() const { return x; }
     int getY() const { return y; }
@@ -19,15 +19,11 @@ public:
 
     bool getIsWhite() const { return isWhite; }
 
-    virtual void moveTo(int toX, int toY)
-    {
-        x = toX;
-        y = toY;
-    }
+    virtual void moveTo(int toX, int toY);
 
-    virtual bool canMoveTo(int x, int y, ChessBoard *board) = 0;
-    // only pawns can attack differently than they move so rest uses canMoveTo
-    virtual bool canAttack(int x, int y, ChessBoard *board) { return canMoveTo(x, y, board); }
+    virtual bool canMoveTo(int toX, int toY, const ChessBoard* board);
+
+    virtual bool canAttack(int x, int y, const ChessBoard* board);
 
     virtual ~ChessPiece() = default;
 };

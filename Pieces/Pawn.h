@@ -18,27 +18,34 @@ public:
         ChessPiece::moveTo(toX, toY);
     }
 
-    bool canMoveTo(int toX, int toY, ChessBoard *board) override
+    bool canMoveTo(int toX, int toY, const ChessBoard* board) override
     {
-        if (toX == x && toY == y)
-            return false;
+        if (!ChessPiece::canMoveTo(toX, toY, board)) return false;
 
         int direction = isWhite ? -1 : 1;
-        int distance = hasMoved ? 1 : 2;
 
-        // Move forward
-        if (toX == x && (toY == y + direction || (toY == y + direction * distance)))
+        // Move forward 1
+        if (toX == x && toY == y + direction)
         {
+            return true;
+        }
+        // move forward 2
+        if (toX == x && toY == y + direction * 2 && !hasMoved)
+        {
+            // check if not blocked
+            if (board->getPiece(toX, toY - direction) != nullptr)
+            {
+                return false;
+            }
             return true;
         }
 
         return false;
     }
 
-    bool canAttack(int toX, int toY, ChessBoard *board) override
+    bool canAttack(int toX, int toY, const ChessBoard* board) override
     {
-        if (toX == x && toY == y)
-            return false;
+        if (!ChessPiece::canMoveTo(toX, toY, board)) return false;
 
         int direction = isWhite ? -1 : 1;
         int dx = toX - x;

@@ -69,6 +69,16 @@ void GDisplay::drawBoard(const ChessBoard &board)
             }
             window.draw(square);
 
+            // if selected piece is not null, draw possible moves
+            if(selectedPiece != nullptr) {
+                if(selectedPiece->canMoveTo(j, i, &board)) {
+                    sf::CircleShape circle(squareSize / 4);
+                    circle.setPosition(j * squareSize + margin + squareSize / 4, i * squareSize + squareSize / 4);
+                    circle.setFillColor(sf::Color(0, 255, 0, 100));
+                    window.draw(circle);
+                }
+            }
+
             // draw piece on square
             auto piece = board.getPiece(j, i);
             if (piece == nullptr)
