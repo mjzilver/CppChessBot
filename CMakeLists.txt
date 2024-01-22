@@ -9,6 +9,8 @@ set(SOURCE_FILES
     ChessBoard.h
     ChessBoard.cpp
     ChessPiece.h
+    ChessGUI.h
+    ChessGUI.cpp
     Player.h
     Player.cpp
     ChessGame.h
@@ -27,7 +29,7 @@ add_executable(ConsoleChess ${SOURCE_FILES})
 # Add Google Test
 add_subdirectory(googletest)
 
-# Add test cpp file
+# Add files to be included in testing
 add_executable(runUnitTests
     ChessBoard.cpp
     Player.cpp
@@ -39,8 +41,10 @@ add_executable(runUnitTests
     Tests/KingTest.cpp
 )
 
-# Link test executable against gtest & gtest_main
+# link gtest to test executable
 target_link_libraries(runUnitTests gtest gtest_main)
+# link SFML to main executable
+target_link_libraries(ConsoleChess sfml-graphics sfml-window sfml-system)
 
 # Enable testing
 enable_testing()

@@ -1,5 +1,7 @@
 #include "ChessGame.h"
 #include "Pieces/Pawn.h"
+#include "ChessGUI.h"
+
 #include <iostream>
 
 ChessGame::ChessGame()
@@ -9,30 +11,52 @@ ChessGame::ChessGame()
     board.resetBoard();
 }
 
-void ChessGame::startGame()
+ChessGame::~ChessGame()
+{
+    if (chessGUI != nullptr) delete chessGUI;
+}
+
+void ChessGame::startGame(bool with_gui)
 {
     board.printBoard();
 
+    if (with_gui)
+    {
+        chessGUI = new ChessGUI();
+        std::cout << "GUI is enabled" << std::endl;
+    }
+
     while (board.isGameOver() == false)
     {
+        displayBoard();
         std::cout << "Player 1's turn (white): " << std::endl;
         std::string moveInputPlayer1 = receiveInput();
         while (!player1.makeMove(board, moveInputPlayer1))
         {
             moveInputPlayer1 = receiveInput();
-            board.printBoard();
+            displayBoard();
         }
-        board.printBoard();
+        displayBoard();
 
         std::cout << "Player 2's turn (black): " << std::endl;
         std::string moveInputPlayer2 = receiveInput();
         while (!player2.makeMove(board, moveInputPlayer2))
         {
             moveInputPlayer2 = receiveInput();
-            board.printBoard();
+            displayBoard();
         }
-        board.printBoard();
+        displayBoard();
     }
+}
+
+void ChessGame::displayBoard()
+{
+    if (chessGUI != nullptr)
+    {
+        chessGUI->drawBoard(board);
+    }
+
+    board.printBoard();
 }
 
 std::string ChessGame::receiveInput()
