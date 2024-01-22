@@ -1,18 +1,19 @@
 #pragma once
 
-#include "ChessBoard.h"
-#include "ChessPiece.h"
+#include "../ChessBoard.h"
+#include "../ChessPiece.h"
+#include "IDisplay.h"
 #include <SFML/Graphics.hpp>
 #include <map>
 
-class ChessGUI
+class GDisplay : public IDisplay
 {
 public:
-    ChessGUI();
-    ~ChessGUI();
+    GDisplay();
+    ~GDisplay();
 
-    void drawBoard(ChessBoard &board);
-    void drawLoop(ChessBoard &board);
+    void drawBoard(const ChessBoard &board) override;
+    void drawLoop(ChessBoard &board) override;
 
 private:
     sf::RenderWindow window;

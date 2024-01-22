@@ -9,8 +9,8 @@ set(SOURCE_FILES
     ChessBoard.h
     ChessBoard.cpp
     ChessPiece.h
-    ChessGUI.h
-    ChessGUI.cpp
+    UI/GDisplay.h
+    UI/GDisplay.cpp
     UI/ConsoleDisplay.h
     UI/ConsoleDisplay.cpp
     ChessGame.h

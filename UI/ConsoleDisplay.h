@@ -4,8 +4,8 @@
 
 class ConsoleDisplay : public IDisplay {
 public:
-    void displayBoard(const ChessBoard& board) override;
-    std::string receiveInput() override;
+    void drawBoard(const ChessBoard& board) override;
+    std::string receiveInput();
     void drawLoop(ChessBoard& board) override;
     bool makeMove(ChessBoard &board, const std::string &moveInput, bool isWhite);
 };

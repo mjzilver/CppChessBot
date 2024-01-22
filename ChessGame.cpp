@@ -1,6 +1,6 @@
 #include "ChessGame.h"
 #include "Pieces/Pawn.h"
-#include "ChessGUI.h"
+#include "UI/GDisplay.h"
 
 #include <iostream>
 #include <thread>
@@ -15,39 +15,27 @@ ChessGame::ChessGame()
 
 ChessGame::~ChessGame()
 {
-    if (chessGUI != nullptr) delete chessGUI;
+    if (gDisplay != nullptr) delete gDisplay;
 }
 
 void ChessGame::startGame(bool with_gui)
 {
-    std::thread* chessGUIThread = nullptr;
+    std::thread* guiThread = nullptr;
 
     if (with_gui)
     {
-        chessGUI = new ChessGUI();
-        chessGUIThread = new std::thread(&ChessGUI::drawLoop, chessGUI, std::ref(board));   
-    }
+        gDisplay = new GDisplay();
+        guiThread = new std::thread(&GDisplay::drawLoop, gDisplay, std::ref(board));   
+    } 
 
-    while (board.isGameOver() == false)
+    IDisplay* display = new ConsoleDisplay();
+    
+    while(board.isGameOver() == false)
     {
-
-        displayBoard();
+        display->drawLoop(board);
     }
 
     std::cout << "Game over!" << std::endl;
-    chessGUIThread->join();
-    delete chessGUIThread;
-}
-
-void ChessGame::displayBoard()
-{
-
-}
-
-std::string ChessGame::receiveInput()
-{
-    std::string input;
-    std::cout << "Enter your move:";
-    std::cin >> input;
-    return input;
+    guiThread->join();
+    delete guiThread;
 }

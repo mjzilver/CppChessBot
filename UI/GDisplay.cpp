@@ -1,8 +1,8 @@
-#include "ChessGUI.h"
+#include "GDisplay.h"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-ChessGUI::ChessGUI() : window(sf::VideoMode(500u, 500u), "Chess Game"), squareSize(60), margin(25)
+GDisplay::GDisplay() : window(sf::VideoMode(500u, 500u), "Chess Game"), squareSize(60), margin(25)
 {
     loadPieceTextures(pieceTextures);
     if (!font.loadFromFile("../resources/OpenSans-Regular.ttf"))
@@ -11,12 +11,12 @@ ChessGUI::ChessGUI() : window(sf::VideoMode(500u, 500u), "Chess Game"), squareSi
     }
 }
 
-ChessGUI::~ChessGUI()
+GDisplay::~GDisplay()
 {
     pieceTextures.clear();
 }
 
-void ChessGUI::drawLoop(ChessBoard &board)
+void GDisplay::drawLoop(ChessBoard &board)
 {
     while (window.isOpen())
     {
@@ -30,7 +30,7 @@ void ChessGUI::drawLoop(ChessBoard &board)
     }
 }
 
-void ChessGUI::drawBoard(ChessBoard &board)
+void GDisplay::drawBoard(const ChessBoard &board)
 {
     window.clear();
 
@@ -107,7 +107,7 @@ void ChessGUI::drawBoard(ChessBoard &board)
     window.display();
 }
 
-void ChessGUI::loadPieceTextures(std::map<char, sf::Texture> &pieceTextures) const
+void GDisplay::loadPieceTextures(std::map<char, sf::Texture> &pieceTextures) const
 {
     const std::string imagePath = "../images/";
 
@@ -133,7 +133,7 @@ void ChessGUI::loadPieceTextures(std::map<char, sf::Texture> &pieceTextures) con
     }
 }
 
-void ChessGUI::handleEvent(sf::Event &event, ChessBoard &board)
+void GDisplay::handleEvent(sf::Event &event, ChessBoard &board)
 {
     switch (event.type)
     {
@@ -148,7 +148,7 @@ void ChessGUI::handleEvent(sf::Event &event, ChessBoard &board)
     }
 }
 
-void ChessGUI::handleMouseClick(sf::Event::MouseButtonEvent &mouse, ChessBoard &board)
+void GDisplay::handleMouseClick(sf::Event::MouseButtonEvent &mouse, ChessBoard &board)
 {
     if (mouse.button == sf::Mouse::Left)
     {
@@ -166,13 +166,16 @@ void ChessGUI::handleMouseClick(sf::Event::MouseButtonEvent &mouse, ChessBoard &
             auto clickedPiece = board.getPiece(col, row);
             if (selectedPiece != nullptr)
             {
+                // clicked on a piece
                 if(clickedPiece != nullptr) {
                     if (board.movePiece(selectedPiece->getX(), selectedPiece->getY(), col, row, selectedPiece->getIsWhite())) {
                         selectedPiece = nullptr;
                     } else {
                         selectedPiece = clickedPiece;
                     }
-                } else if(selectedPiece->canMoveTo(col, row, &board)) {
+                } 
+                // clicked on an empty square
+                else if(selectedPiece->canMoveTo(col, row, &board)) {
                     board.movePiece(selectedPiece->getX(), selectedPiece->getY(), col, row, selectedPiece->getIsWhite());
                     selectedPiece = nullptr;
                 } else {

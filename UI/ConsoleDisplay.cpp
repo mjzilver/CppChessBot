@@ -2,19 +2,27 @@
 
 #include <iostream>
 
-void ConsoleDisplay::displayBoard(const ChessBoard& board) {
-    std::cout << "  ";
-    for (int i = 0; i < 8; i++) {
-        std::cout << i << " ";
-    }
-    std::cout << std::endl;
-    for (int i = 0; i < 8; i++) {
-        std::cout << i << " ";
-        for (int j = 0; j < 8; j++) {
-            std::cout << board.getPiece(i, j)->getSymbol() << " ";
+void ConsoleDisplay::drawBoard(const ChessBoard& board) {
+    for (int i = 0; i < 8; ++i)
+    {
+        std::cout << 8 - i << ' ';
+        for (int j = 0; j < 8; ++j)
+        {
+            auto piece = board.getPiece(j, i);
+            if (piece == nullptr)
+            {
+                // No piece at this location
+                std::cout << ' ';
+            }
+            else
+            {
+                std::cout << piece->getSymbol();
+            }
+            std::cout << ' ';
         }
         std::cout << std::endl;
     }
+    std::cout << "  a b c d e f g h" << std::endl;
 }
 
 std::string ConsoleDisplay::receiveInput() {
@@ -27,22 +35,24 @@ void ConsoleDisplay::drawLoop(ChessBoard &board)
 {
     while (board.isGameOver() == false)
     {
+        drawBoard(board);
         std::cout << "Player 1's turn (white): " << std::endl;
         std::string moveInputPlayer1 = receiveInput();
-        while (makeMove(board, moveInputPlayer1, true))
+        while (!makeMove(board, moveInputPlayer1, true))
         {
             moveInputPlayer1 = receiveInput();
-            displayBoard(board);
+            drawBoard(board);
         }
-        displayBoard(board);
+        drawBoard(board);
 
+        std::cout << "Player 2's turn (black): " << std::endl;
         std::string moveInputPlayer2 = receiveInput();
-        while (makeMove(board, moveInputPlayer2, false))
+        while (!makeMove(board, moveInputPlayer2, false))
         {
             moveInputPlayer2 = receiveInput();
-            displayBoard(board);
+            drawBoard(board);
         }
-        displayBoard(board);
+        drawBoard(board);
     }
 
     std::cout << "Game over!" << std::endl;
