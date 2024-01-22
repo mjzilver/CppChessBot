@@ -188,47 +188,64 @@ void GDisplay::handleMouseClick(sf::Event::MouseButtonEvent &mouse, ChessBoard &
 {
     if (mouse.button == sf::Mouse::Left)
     {
-        // Get the mouse position in window coordinates
         sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-        // Convert window coordinates to view coordinates
-        sf::Vector2f worldPos = window.mapPixelToCoords(mousePos);
+        sf::Vector2f viewCoordinates = window.mapPixelToCoords(mousePos);
 
-        // Convert view coordinates to board coordinates
-        int col = (worldPos.x - margin) / squareSize;
-        int row = (worldPos.y) / squareSize;
+        int colIndex = static_cast<int>((viewCoordinates.x - margin) / squareSize);
+        int rowIndex = static_cast<int>(viewCoordinates.y / squareSize);
 
-        if (col >= 0 && col < 8 && row >= 0 && row < 8)
-        {
-            auto clickedPiece = board.getPiece(col, row);
-            if (selectedPiece != nullptr)
-            {
-                // clicked on a piece
-                if (clickedPiece != nullptr)
-                {
-                    if (board.movePiece(selectedPiece->getX(), selectedPiece->getY(), col, row, selectedPiece->getIsWhite()))
-                    {
-                        selectedPiece = nullptr;
-                    }
-                    else
-                    {
-                        selectedPiece = clickedPiece;
-                    }
-                }
-                // clicked on an empty square
-                else if (selectedPiece->canMoveTo(col, row, &board))
-                {
-                    board.movePiece(selectedPiece->getX(), selectedPiece->getY(), col, row, selectedPiece->getIsWhite());
-                    selectedPiece = nullptr;
-                }
-                else
-                {
-                    selectedPiece = nullptr;
-                }
-            }
-            else
-            {
-                selectedPiece = board.getPiece(col, row);
-            }
-        }
+        handleValidChessboardClick(colIndex, rowIndex, board);
     }
+}
+
+void GDisplay::handleValidChessboardClick(int colIndex, int rowIndex, ChessBoard &board)
+{
+    auto clickedPiece = board.getPiece(colIndex, rowIndex);
+
+    if (selectedPiece != nullptr)
+    {
+        handleSelectedPieceClick(clickedPiece, colIndex, rowIndex, board);
+    }
+    else
+    {
+        selectedPiece = clickedPiece;
+    }
+}
+
+void GDisplay::handleSelectedPieceClick(ChessPiece* clickedPiece, int colIndex, int rowIndex, ChessBoard &board)
+{
+    if (clickedPiece != nullptr)
+    {
+        handleMoveToOccupiedSquare(clickedPiece, colIndex, rowIndex, board);
+    }
+    else if (selectedPiece->canMoveTo(colIndex, rowIndex, &board))
+    {
+        handleMoveToEmptySquare(colIndex, rowIndex, board);
+    }
+    else
+    {
+        selectedPiece = nullptr;
+    }
+}
+
+void GDisplay::handleMoveToOccupiedSquare(ChessPiece* clickedPiece, int colIndex, int rowIndex, ChessBoard &board)
+{
+    if (board.movePiece(selectedPiece->getX(), selectedPiece->getY(), colIndex, rowIndex, isCurrentPlayerWhite))
+    {
+        isCurrentPlayerWhite = !isCurrentPlayerWhite;
+        selectedPiece = nullptr;
+    }
+    else
+    {
+        selectedPiece = clickedPiece;
+    }
+}
+
+void GDisplay::handleMoveToEmptySquare(int colIndex, int rowIndex, ChessBoard &board)
+{
+    if (board.movePiece(selectedPiece->getX(), selectedPiece->getY(), colIndex, rowIndex, isCurrentPlayerWhite))
+    {
+        isCurrentPlayerWhite = !isCurrentPlayerWhite;
+    }
+    selectedPiece = nullptr;
 }

@@ -26,5 +26,12 @@ private:
 
     void loadPieceTextures(std::map<char, sf::Texture> &pieceTextures) const;
     void handleMouseClick(sf::Event::MouseButtonEvent &mouse, ChessBoard &board);
+    void handleValidChessboardClick(int colIndex, int rowIndex, ChessBoard &board);
+    void handleSelectedPieceClick(ChessPiece *clickedPiece, int colIndex, int rowIndex, ChessBoard &board);
+    void handleMoveToOccupiedSquare(ChessPiece *clickedPiece, int colIndex, int rowIndex, ChessBoard &board);
+    void handleMoveToEmptySquare(int colIndex, int rowIndex, ChessBoard &board);
+
     void handleEvent(sf::Event &event, ChessBoard &board);
+
+    bool isCurrentPlayerWhite = true;
 };
