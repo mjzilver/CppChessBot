@@ -23,6 +23,21 @@ TEST(PawnTest, CanMoveTo) {
     EXPECT_FALSE(pawn->canMoveTo(3, 2, &board));
 }
 
+TEST(PawnTest, CanMoveTwoSquares) {
+    ChessBoard board;
+    Pawn* pawn = new Pawn(4, 4, true); 
+    board.addPiece(pawn);
+
+    // white can only move into negative y direction
+    EXPECT_TRUE(pawn->canMoveTo(4, 2, &board));
+
+    board.emptyBoard();
+    board.addPiece(new Pawn(2, 2, false));
+
+    // black can only move into positive y direction
+    EXPECT_TRUE(pawn->canMoveTo(2, 4, &board));
+}
+
 TEST(PawnTest, CanMoveToBlocked) {
     ChessBoard board;
     Pawn* pawn = new Pawn(4, 4, true); 

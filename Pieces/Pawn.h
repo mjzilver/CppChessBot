@@ -3,12 +3,18 @@
 #include "../ChessPiece.h"
 #include "../ChessBoard.h"
 #include <cmath>
+#include <iostream>
 
 class Pawn : public ChessPiece {
 public:
     Pawn(int x, int y, bool isWhite) : ChessPiece(x, y, isWhite) {}
 
     char getSymbol() const override { return isWhite ? 'P' : 'p'; }
+
+    void moveTo(int toX, int toY) override {
+        hasMoved = true;
+        ChessPiece::moveTo(toX, toY);
+    }
 
     bool canMoveTo(int toX, int toY, ChessBoard* board) override {
         if (toX == x && toY == y) return false;
@@ -17,8 +23,7 @@ public:
         int distance = hasMoved ? 1 : 2;
 
         // Move forward
-        if (toX == x && (toY == y + direction || toY == y + direction * distance)) {
-            hasMoved = true;
+        if (toX == x && (toY == y + direction || (toY == y + direction * distance))) {
             return true;
         }
 

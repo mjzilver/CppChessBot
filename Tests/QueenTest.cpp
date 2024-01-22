@@ -36,15 +36,15 @@ TEST(QueenTest, CanMoveToBlocked) {
     // Test movement in a straight line
     board.addPiece(new Pawn(4, 5, true));
     EXPECT_FALSE(queen->canMoveTo(4, 7, &board));
-    board.emptyBoard();
+    board.removePiece(4, 5);
 
     // Test movement diagonally
     board.addPiece(new Pawn(5, 5, true));
     EXPECT_FALSE(queen->canMoveTo(7, 7, &board));
-    board.emptyBoard();
+    board.removePiece(5, 5);
 
     // test movement blocked by other pieces
     board.addPiece(new Pawn(5, 3, true));
     EXPECT_FALSE(queen->canMoveTo(7, 1, &board));
-    board.emptyBoard();
+    board.removePiece(5, 3);
 }

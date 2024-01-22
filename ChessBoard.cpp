@@ -162,8 +162,7 @@ bool ChessBoard::movePiece(int fromX, int fromY, int toX, int toY, bool isWhite)
     }
 
     // move to new location
-    piece->setX(toX);
-    piece->setY(toY);
+    piece->moveTo(toX, toY);
 
     return true;
 }

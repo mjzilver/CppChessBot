@@ -7,7 +7,7 @@ ChessGUI::ChessGUI() : window(sf::VideoMode(500u, 500u), "Chess Game"), squareSi
     loadPieceTextures(pieceTextures);
     if (!font.loadFromFile("../resources/OpenSans-Regular.ttf"))
     {
-        std::cerr << "Error loading font" << std::endl;   
+        std::cerr << "Error loading font" << std::endl;
     }
 }
 
@@ -16,34 +16,39 @@ ChessGUI::~ChessGUI()
     pieceTextures.clear();
 }
 
-void ChessGUI::drawBoard(const ChessBoard &board)
+void ChessGUI::drawLoop(ChessBoard &board)
 {
-    std::cout << "Drawing board" << std::endl;
-
-    sf::Event event;
-    while (window.pollEvent(event))
+    while (window.isOpen())
     {
-        if (event.type == sf::Event::Closed)
-            window.close();
-    }
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            handleEvent(event, board);
+        }
 
+        drawBoard(board);
+    }
+}
+
+void ChessGUI::drawBoard(ChessBoard &board)
+{
     window.clear();
 
-    // Draw ranks 
+    // Draw ranks
     for (int i = 0; i < 8; ++i)
     {
         sf::Text rankLabel(std::to_string(8 - i), font, 20);
         rankLabel.setPosition(5, i * squareSize + (margin));
-        rankLabel.setFillColor(sf::Color::White); 
+        rankLabel.setFillColor(sf::Color::White);
         window.draw(rankLabel);
     }
 
-    // Draw files 
+    // Draw files
     for (int i = 0; i < 8; ++i)
     {
         sf::Text fileLabel(std::string(1, 'A' + i), font, 20);
         fileLabel.setPosition(i * squareSize + (margin * 2), squareSize * 8);
-        fileLabel.setFillColor(sf::Color::White);  
+        fileLabel.setFillColor(sf::Color::White);
         window.draw(fileLabel);
     }
 
@@ -98,7 +103,8 @@ void ChessGUI::loadPieceTextures(std::map<char, sf::Texture> &pieceTextures) con
 
     // Define the pieces and their corresponding filenames
     std::map<char, std::string> pieceFilenames = {
-        {'P', "WP.png"}, {'N', "WN.png"}, {'B', "WB.png"}, {'R', "WR.png"}, {'Q', "WQ.png"}, {'K', "WK.png"}, {'p', "BP.png"}, {'n', "BN.png"}, {'b', "BB.png"}, {'r', "BR.png"}, {'q', "BQ.png"}, {'k', "BK.png"}};
+        {'P', "WP.png"}, {'N', "WN.png"}, {'B', "WB.png"}, {'R', "WR.png"}, {'Q', "WQ.png"}, {'K', "WK.png"}, 
+        {'p', "BP.png"}, {'n', "BN.png"}, {'b', "BB.png"}, {'r', "BR.png"}, {'q', "BQ.png"}, {'k', "BK.png"}};
 
     for (const auto &entry : pieceFilenames)
     {
@@ -113,6 +119,49 @@ void ChessGUI::loadPieceTextures(std::map<char, sf::Texture> &pieceTextures) con
         else
         {
             std::cerr << "Error loading texture for piece " << piece << std::endl;
+        }
+    }
+}
+
+void ChessGUI::handleEvent(sf::Event &event, ChessBoard &board)
+{
+    switch (event.type)
+    {
+    case sf::Event::Closed:
+        window.close();
+        break;
+    case sf::Event::MouseButtonPressed:
+        handleMouseClick(event.mouseButton, board);
+        break;
+    default:
+        break;
+    }
+}
+
+void ChessGUI::handleMouseClick(sf::Event::MouseButtonEvent &mouse, ChessBoard &board)
+{
+    if (mouse.button == sf::Mouse::Left)
+    {
+        // Get the mouse position in window coordinates
+        sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+        // Convert window coordinates to view coordinates
+        sf::Vector2f worldPos = window.mapPixelToCoords(mousePos);
+
+        // Convert view coordinates to board coordinates
+        int col = (worldPos.x - margin) / squareSize;
+        int row = (worldPos.y) / squareSize;
+
+        if (col >= 0 && col < 8 && row >= 0 && row < 8)
+        {
+            if (selectedPiece != nullptr)
+            {
+                if(selectedPiece->canMoveTo(col, row, &board)) {
+                    board.movePiece(selectedPiece->getX(), selectedPiece->getY(), col, row, selectedPiece->getIsWhite());
+                    selectedPiece = nullptr;
+                }
+            } else {
+                selectedPiece = board.getPiece(col, row);
+            }
         }
     }
 }

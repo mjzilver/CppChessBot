@@ -22,7 +22,14 @@ public:
     // board functions
     void resetBoard();
     void printBoard();
-    void emptyBoard() { pieces.clear(); }
+    void emptyBoard()
+    {
+        for (int i = 0; i < pieces.size(); ++i)
+        {
+            delete pieces[i];
+        }
+        pieces.clear();
+    }
 
     // piece functions
     ChessPiece *getPiece(int x, int y) const;
