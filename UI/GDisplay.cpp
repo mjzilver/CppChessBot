@@ -69,35 +69,25 @@ void GDisplay::drawBoard(const ChessBoard &board)
     {
         for (int j = 0; j < 8; ++j)
         {
-            // draw white or black square
-            sf::RectangleShape square(sf::Vector2f(squareSize, squareSize));
-            square.setPosition(j * squareSize + margin, i * squareSize);
             if ((i + j) % 2 == 0)
             {
-                square.setFillColor(sf::Color(255, 255, 255));
+                drawSquare(j, i, sf::Color(230, 230, 230));
             }
             else
             {
-                square.setFillColor(sf::Color(70, 70, 70));
+                drawSquare(j, i, sf::Color(75, 75, 75));
             }
-            window.draw(square);
 
             // if selected piece is not null, draw possible moves
             if (selectedPiece != nullptr)
             {
                 if (board.getPiece(j, i) != nullptr && selectedPiece->canAttack(j, i, &board))
                 {
-                    sf::RectangleShape square(sf::Vector2f(squareSize, squareSize));
-                    square.setPosition(j * squareSize + margin, i * squareSize);
-                    square.setFillColor(sf::Color(255, 0, 0, 100));
-                    window.draw(square);
+                    drawSquare(j, i, sf::Color(255, 0, 0, 100));
                 }
                 else if (selectedPiece->canMoveTo(j, i, &board))
                 {
-                    sf::CircleShape circle(squareSize / 4);
-                    circle.setPosition(j * squareSize + margin + squareSize / 4, i * squareSize + squareSize / 4);
-                    circle.setFillColor(sf::Color(0, 255, 0, 100));
-                    window.draw(circle);
+                    drawCircle(j, i, 0.5, sf::Color(0, 255, 0, 100));
                 }
             }
 
@@ -107,36 +97,25 @@ void GDisplay::drawBoard(const ChessBoard &board)
             {
                 continue;
             }
+
+            char pieceSymbol = piece->getSymbol();
+
+            auto it = pieceTextures.find(pieceSymbol);
+            if (it != pieceTextures.end())
+            {
+                // draw a circle around the selected piece
+                if (selectedPiece != nullptr && piece == selectedPiece)
+                {
+                    drawCircleOutline(j, i, 0.8, sf::Color(0, 0, 255, 100));
+                }
+
+                sf::Sprite pieceSprite(it->second);
+                pieceSprite.setPosition(j * squareSize + margin, i * squareSize);
+                window.draw(pieceSprite);
+            }
             else
             {
-                char pieceSymbol = piece->getSymbol();
-
-                auto it = pieceTextures.find(pieceSymbol);
-                if (it != pieceTextures.end())
-                {
-                    // draw a circle around the selected piece
-                    if (selectedPiece != nullptr && piece == selectedPiece)
-                    {
-                        const float circleFraction = 8.0 / 10.0;
-                        const float radius = circleFraction * (squareSize / 2);
-                        const float offset = (squareSize * (1 - circleFraction)) / 2;
-
-                        sf::CircleShape border(radius);
-                        border.setPosition(j * squareSize + margin + offset, i * squareSize + offset);
-                        border.setFillColor(sf::Color::Transparent);
-                        border.setOutlineThickness(4);
-                        border.setOutlineColor(sf::Color(0, 0, 255, 100));
-                        window.draw(border);
-                    }
-
-                    sf::Sprite pieceSprite(it->second);
-                    pieceSprite.setPosition(j * squareSize + margin, i * squareSize);
-                    window.draw(pieceSprite);
-                }
-                else
-                {
-                    std::cerr << "Texture not found for piece " << piece << std::endl;
-                }
+                std::cerr << "Texture not found for piece " << piece << std::endl;
             }
         }
     }
@@ -150,7 +129,9 @@ void GDisplay::loadPieceTextures(std::map<char, sf::Texture> &pieceTextures) con
 
     // Define the pieces and their corresponding filenames
     std::map<char, std::string> pieceFilenames = {
-        {'P', "WP.png"}, {'N', "WN.png"}, {'B', "WB.png"}, {'R', "WR.png"}, {'Q', "WQ.png"}, {'K', "WK.png"}, {'p', "BP.png"}, {'n', "BN.png"}, {'b', "BB.png"}, {'r', "BR.png"}, {'q', "BQ.png"}, {'k', "BK.png"}};
+        {'P', "WP.png"}, {'N', "WN.png"}, {'B', "WB.png"}, {'R', "WR.png"}, {'Q', "WQ.png"}, {'K', "WK.png"}, 
+        {'p', "BP.png"}, {'n', "BN.png"}, {'b', "BB.png"}, {'r', "BR.png"}, {'q', "BQ.png"}, {'k', "BK.png"}
+    };
 
     for (const auto &entry : pieceFilenames)
     {
@@ -167,6 +148,38 @@ void GDisplay::loadPieceTextures(std::map<char, sf::Texture> &pieceTextures) con
             std::cerr << "Error loading texture for piece " << piece << std::endl;
         }
     }
+}
+
+void GDisplay::drawCircleOutline(int x, int y, float circleFraction, const sf::Color& borderColor)
+{
+    const float radius = circleFraction * (squareSize / 2);
+    const float offset = (squareSize * (1 - circleFraction)) / 2;
+
+    sf::CircleShape border(radius);
+    border.setPosition(x * squareSize + margin + offset, y * squareSize + offset);
+    border.setFillColor(sf::Color::Transparent);
+    border.setOutlineThickness(4);
+    border.setOutlineColor(borderColor);
+    window.draw(border);
+}
+
+void GDisplay::drawCircle(int x, int y, float circleFraction, const sf::Color& color)
+{
+    const float radius = circleFraction * (squareSize / 2);
+    const float offset = (squareSize * (1 - circleFraction)) / 2;
+
+    sf::CircleShape circle(radius);
+    circle.setPosition(x * squareSize + margin + offset, y * squareSize + offset);
+    circle.setFillColor(color);
+    window.draw(circle);
+}
+
+void GDisplay::drawSquare(int x, int y, const sf::Color& color)
+{
+    sf::RectangleShape square(sf::Vector2f(squareSize, squareSize));
+    square.setPosition(x * squareSize + margin, y * squareSize);
+    square.setFillColor(color);
+    window.draw(square);
 }
 
 void GDisplay::handleEvent(sf::Event &event, ChessBoard &board)
@@ -212,7 +225,7 @@ void GDisplay::handleValidChessboardClick(int colIndex, int rowIndex, ChessBoard
     }
 }
 
-void GDisplay::handleSelectedPieceClick(ChessPiece* clickedPiece, int colIndex, int rowIndex, ChessBoard &board)
+void GDisplay::handleSelectedPieceClick(ChessPiece *clickedPiece, int colIndex, int rowIndex, ChessBoard &board)
 {
     if (clickedPiece != nullptr)
     {
@@ -228,7 +241,7 @@ void GDisplay::handleSelectedPieceClick(ChessPiece* clickedPiece, int colIndex, 
     }
 }
 
-void GDisplay::handleMoveToOccupiedSquare(ChessPiece* clickedPiece, int colIndex, int rowIndex, ChessBoard &board)
+void GDisplay::handleMoveToOccupiedSquare(ChessPiece *clickedPiece, int colIndex, int rowIndex, ChessBoard &board)
 {
     if (board.movePiece(selectedPiece->getX(), selectedPiece->getY(), colIndex, rowIndex, isCurrentPlayerWhite))
     {

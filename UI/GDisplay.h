@@ -23,15 +23,20 @@ private:
     std::map<char, sf::Texture> pieceTextures;
     sf::Font font;
     ChessPiece* selectedPiece = nullptr;
+    bool isCurrentPlayerWhite = true;
 
     void loadPieceTextures(std::map<char, sf::Texture> &pieceTextures) const;
+
+    // Drawing functions
+    void drawSquare(int x, int y, const sf::Color &color);
+    void drawCircleOutline(int x, int y, float borderFraction, const sf::Color &borderColor);
+    void drawCircle(int x, int y, float circleFraction, const sf::Color &color);
+
+    // Event handlers for selecting and moving pieces
+    void handleEvent(sf::Event &event, ChessBoard &board);
     void handleMouseClick(sf::Event::MouseButtonEvent &mouse, ChessBoard &board);
     void handleValidChessboardClick(int colIndex, int rowIndex, ChessBoard &board);
     void handleSelectedPieceClick(ChessPiece *clickedPiece, int colIndex, int rowIndex, ChessBoard &board);
     void handleMoveToOccupiedSquare(ChessPiece *clickedPiece, int colIndex, int rowIndex, ChessBoard &board);
     void handleMoveToEmptySquare(int colIndex, int rowIndex, ChessBoard &board);
-
-    void handleEvent(sf::Event &event, ChessBoard &board);
-
-    bool isCurrentPlayerWhite = true;
 };
