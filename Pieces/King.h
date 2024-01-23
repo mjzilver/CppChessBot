@@ -9,6 +9,17 @@ class King : public ChessPiece {
 public:
     King(int x, int y, bool isWhite) : ChessPiece(x, y, isWhite, 20) {}
 
+    // Deep copy constructor for Bishop
+    King(const King& other) : ChessPiece(other) {
+        x = other.x;
+        y = other.y;
+        price = other.price;
+        isWhite = other.isWhite;
+    }
+
+    // Clone function for Bishop
+    ChessPiece* clone() const override { return new King(*this); }
+
     char getSymbol() const override { return isWhite ? 'K' : 'k'; }
 
     bool canMoveTo(int toX, int toY, const ChessBoard* const board) override {

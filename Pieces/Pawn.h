@@ -10,6 +10,17 @@ class Pawn : public ChessPiece {
 public:
     Pawn(int x, int y, bool isWhite) : ChessPiece(x, y, isWhite, 1) {}
 
+    // Deep copy constructor for Bishop
+    Pawn(const Pawn& other) : ChessPiece(other) {
+        x = other.x;
+        y = other.y;
+        price = other.price;
+        isWhite = other.isWhite;
+    }
+
+    // Clone function for Bishop
+    ChessPiece* clone() const override { return new Pawn(*this); }
+
     char getSymbol() const override { return isWhite ? 'P' : 'p'; }
 
     void moveTo(int toX, int toY) override {

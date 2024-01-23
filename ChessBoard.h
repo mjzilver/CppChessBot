@@ -16,7 +16,7 @@ public:
     // deep copy constructor
     ChessBoard(const ChessBoard &other) : _gameOver(other._gameOver) {
         for (int i = 0; i < other.pieces.size(); ++i) {
-            pieces.push_back(new ChessPiece(*other.pieces[i]));
+            pieces.push_back(other.pieces[i]->clone());
         }
     }
     ~ChessBoard();

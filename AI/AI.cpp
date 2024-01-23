@@ -11,7 +11,7 @@ const float CHECKMATE_SCORE = 1000.0f;
 const float DRAW_SCORE = 0.0f;
 
 float AI::minimax(ChessBoard* board, int depth, float alpha, float beta, bool maximizingPlayer, bool isWhite) {
-    if (depth < 1 || board->isGameOver()) {
+    if (depth == 0) {
         return evaluatePosition(board, isWhite);
     }
     float bestScore = maximizingPlayer ? -10000 : 10000;
@@ -51,7 +51,7 @@ std::vector<Move> AI::generateMoves(ChessBoard* board, bool isWhite) {
     for (auto piece : pieces) {
         if (piece->getIsWhite() == isWhite) {
             // loop over all possible moves
-            auto moves = getMovesForPiece(board, piece, true);
+            auto moves = getMovesForPiece(board, piece);
 
             availableMoves.insert(availableMoves.end(), moves.begin(), moves.end());
         }
@@ -77,7 +77,8 @@ Move AI::findBestMove(ChessBoard* board, bool isWhite) {
         ChessBoard* newBoard = new ChessBoard(*board);
         newBoard->movePiece(move.fromX, move.fromY, move.toX, move.toY, isWhite);
 
-        float score = minimax(newBoard, 1, -10000, 10000, true, !isWhite);
+        float score = minimax(newBoard, 2, -10000, 10000, true, !isWhite);
+
         if (score > bestScore) {
             bestScore = score;
             bestMove = move;
@@ -116,34 +117,20 @@ float AI::evaluatePosition(ChessBoard* board, bool isWhite) {
         } else {
             blackScore += pieceValue;
         }
-
-        // Consider pawn structure
-        if (toupper(piece->getSymbol()) == 'P') {
-            int pawnRow = piece->getIsWhite() ? 6 : 1;
-            if (piece->getX() == pawnRow) {
-                whiteScore += 0.5f;  // Bonus for advanced pawns
-            }
-        }
     }
 
     return isWhite ? (whiteScore - blackScore) : (blackScore - whiteScore);
 }
 
-std::vector<Move> AI::getMovesForPiece(ChessBoard* board, ChessPiece* piece, bool considerAttacks) {
+std::vector<Move> AI::getMovesForPiece(ChessBoard* board, ChessPiece* piece) {
     auto moves = std::vector<Move>();
 
     for (int i = 0; i < 8; ++i) {
         for (int j = 0; j < 8; ++j) {
             auto move = Move{piece->getX(), piece->getY(), i, j, 0};
 
-            if (considerAttacks) {
-                if (isValidAttack(board, piece, move)) {
-                    moves.push_back(move);
-                }
-            } else {
-                if (isValidMove(board, piece, move)) {
-                    moves.push_back(move);
-                }
+            if (isValidMove(board, piece, move)) {
+                moves.push_back(move);
             }
         }
     }
@@ -171,6 +158,7 @@ float AI::getValueForPiece(ChessPiece* piece) {
         case 'K':
             return 900.0f;
         default:
-            return 0.0f;  // Unknown piece type
+            std::cout << "!!!!!!! Unknown piece type" << std::endl;
+            return 12.4f;  // Unknown piece type
     }
 }

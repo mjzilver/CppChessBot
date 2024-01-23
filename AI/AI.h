@@ -24,7 +24,7 @@ private:
     float evaluatePosition(ChessBoard* board, bool isWhite);
     float minimax(ChessBoard* board, int depth, float alpha, float beta, bool maximizingPlayer, bool isWhite);
 
-    std::vector<Move> getMovesForPiece(ChessBoard* board, ChessPiece* piece, bool considerAttacks = false);
+    std::vector<Move> getMovesForPiece(ChessBoard* board, ChessPiece* piece);
     float getValueForPiece(ChessPiece* piece);
 
     std::vector<Move> generateMoves(ChessBoard* board, bool isWhite);

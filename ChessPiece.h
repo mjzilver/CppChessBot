@@ -7,19 +7,19 @@ protected:
     int x;
     int y;
     int price = 0;
-    const bool isWhite;
+    bool isWhite;
 
 public:
     ChessPiece(int x, int y, bool isWhite, int price);
 
     // deep copy constructor
-    ChessPiece(const ChessPiece& other) : x(other.x), y(other.y), isWhite(other.isWhite), price(other.price) {}
+    virtual ChessPiece* clone() const = 0;
 
     int getX() const { return x; }
     int getY() const { return y; }
     int getPrice() const { return price; }
 
-    virtual char getSymbol() const { return ' '; };
+    virtual char getSymbol() const { return 'X'; };
 
     bool getIsWhite() const { return isWhite; }
 
