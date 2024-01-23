@@ -20,15 +20,16 @@ public:
 private:
     int maxDepth;
 
-    float evaluatePosition(ChessBoard* board, bool isWhite);
-    float getValueForPiece(ChessPiece* piece);
-
-    float minimax(ChessBoard* board, int depth, float alpha, float beta, bool maximizingPlayer, bool isWhite);
-    std::vector<Move> getMovesForPiece(ChessBoard* board, ChessPiece* piece);
     Move findBestMove(ChessBoard* board, bool isWhite);
+    float evaluatePosition(ChessBoard* board, bool isWhite);
+    float minimax(ChessBoard* board, int depth, float alpha, float beta, bool maximizingPlayer, bool isWhite);
+
+    std::vector<Move> getMovesForPiece(ChessBoard* board, ChessPiece* piece, bool considerAttacks = false);
+    float getValueForPiece(ChessPiece* piece);
 
     std::vector<Move> generateMoves(ChessBoard* board, bool isWhite);
     bool isValidMove(ChessBoard* board, ChessPiece* piece, const Move& move);
+    bool isValidAttack(ChessBoard* board, ChessPiece* piece, const Move& move);
 };
 
 #endif  // AI_H

@@ -14,13 +14,10 @@ float AI::minimax(ChessBoard* board, int depth, float alpha, float beta, bool ma
     if (depth < 1 || board->isGameOver()) {
         return evaluatePosition(board, isWhite);
     }
-    std::cout << "depth: " << depth << std::endl;
-
-    float bestScore = maximizingPlayer ? -1000 : 1000;
+    float bestScore = maximizingPlayer ? -10000 : 10000;
 
     auto moves = generateMoves(board, isWhite);
 
-    std::cout << "checking moves..." << moves.size() << std::endl;
     for (const auto& move : moves) {
         ChessBoard* newBoard = new ChessBoard(*board);
         newBoard->movePiece(move.fromX, move.fromY, move.toX, move.toY, isWhite);
@@ -45,22 +42,6 @@ float AI::minimax(ChessBoard* board, int depth, float alpha, float beta, bool ma
     return bestScore;
 }
 
-std::vector<Move> AI::getMovesForPiece(ChessBoard* board, ChessPiece* piece) {
-    auto moves = std::vector<Move>();
-
-    for (int i = 0; i < 8; ++i) {
-        for (int j = 0; j < 8; ++j) {
-            auto move = Move{piece->getX(), piece->getY(), i, j, 0};
-
-            if (isValidMove(board, piece, move)) {
-                moves.push_back(move);
-            }
-        }
-    }
-
-    return moves;
-}
-
 std::vector<Move> AI::generateMoves(ChessBoard* board, bool isWhite) {
     auto availableMoves = std::vector<Move>();
 
@@ -70,7 +51,7 @@ std::vector<Move> AI::generateMoves(ChessBoard* board, bool isWhite) {
     for (auto piece : pieces) {
         if (piece->getIsWhite() == isWhite) {
             // loop over all possible moves
-            auto moves = getMovesForPiece(board, piece);
+            auto moves = getMovesForPiece(board, piece, true);
 
             availableMoves.insert(availableMoves.end(), moves.begin(), moves.end());
         }
@@ -90,20 +71,13 @@ Move AI::findBestMove(ChessBoard* board, bool isWhite) {
     float bestScore = -1000;
     Move bestMove;
 
-    std::cout << "Generating moves..." << std::endl;
     auto moves = generateMoves(board, isWhite);
 
-    std::cout << "Evaluating moves..." << std::endl;
     for (const auto& move : moves) {
-        std::cout << "Copying board..." << std::endl;
         ChessBoard* newBoard = new ChessBoard(*board);
-        std::cout << "Moving piece..." << std::endl;
         newBoard->movePiece(move.fromX, move.fromY, move.toX, move.toY, isWhite);
-        std::cout << "Move completed..." << std::endl;
 
-        std::cout << "Evaluating move: " << std::endl;
-        float score = minimax(newBoard, 2, -1000, 1000, false, !isWhite);
-        std::cout << "Score: " << score << std::endl;
+        float score = minimax(newBoard, 1, -10000, 10000, true, !isWhite);
         if (score > bestScore) {
             bestScore = score;
             bestMove = move;
@@ -117,7 +91,6 @@ Move AI::findBestMove(ChessBoard* board, bool isWhite) {
 }
 
 void AI::makeMove(ChessBoard* board, bool isWhite) {
-    std::cout << "AI is thinking..." << std::endl;
     Move bestMove = findBestMove(board, isWhite);
 
     std::cout << "AI move: " << board->xyToChessPos(bestMove.fromX, bestMove.fromY);
@@ -136,31 +109,67 @@ float AI::evaluatePosition(ChessBoard* board, bool isWhite) {
     auto pieces = board->getPieces();
 
     for (auto piece : pieces) {
+        float pieceValue = getValueForPiece(piece);
+
         if (piece->getIsWhite()) {
-            whiteScore += getValueForPiece(piece);
+            whiteScore += pieceValue;
         } else {
-            blackScore += getValueForPiece(piece);
+            blackScore += pieceValue;
+        }
+
+        // Consider pawn structure
+        if (toupper(piece->getSymbol()) == 'P') {
+            int pawnRow = piece->getIsWhite() ? 6 : 1;
+            if (piece->getX() == pawnRow) {
+                whiteScore += 0.5f;  // Bonus for advanced pawns
+            }
         }
     }
 
     return isWhite ? (whiteScore - blackScore) : (blackScore - whiteScore);
 }
 
+std::vector<Move> AI::getMovesForPiece(ChessBoard* board, ChessPiece* piece, bool considerAttacks) {
+    auto moves = std::vector<Move>();
+
+    for (int i = 0; i < 8; ++i) {
+        for (int j = 0; j < 8; ++j) {
+            auto move = Move{piece->getX(), piece->getY(), i, j, 0};
+
+            if (considerAttacks) {
+                if (isValidAttack(board, piece, move)) {
+                    moves.push_back(move);
+                }
+            } else {
+                if (isValidMove(board, piece, move)) {
+                    moves.push_back(move);
+                }
+            }
+        }
+    }
+
+    return moves;
+}
+
+bool AI::isValidAttack(ChessBoard* board, ChessPiece* piece, const Move& move) {
+    return piece->canAttack(move.toX, move.toY, board);
+}
+
 float AI::getValueForPiece(ChessPiece* piece) {
     // Assign values to each piece
     switch (toupper(piece->getSymbol())) {
         case 'P':
-            return 1.0f;
+            return 10.0f;
         case 'N':
-            return 3.0f;
+            return 30.0f;
         case 'B':
-            return 3.0f;
+            return 30.0f;
         case 'R':
-            return 5.0f;
+            return 50.0f;
         case 'Q':
-            return 9.0f;
+            return 90.0f;
         case 'K':
-            return 100.0f;
+            return 900.0f;
         default:
             return 0.0f;  // Unknown piece type
     }
