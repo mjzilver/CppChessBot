@@ -77,7 +77,7 @@ Move AI::findBestMove(ChessBoard* board, bool isWhite) {
         ChessBoard* newBoard = new ChessBoard(*board);
         newBoard->movePiece(move.fromX, move.fromY, move.toX, move.toY, isWhite);
 
-        float score = minimax(newBoard, 2, -10000, 10000, true, !isWhite);
+        float score = minimax(newBoard, 3, -10000, 10000, true, !isWhite);
 
         if (score > bestScore) {
             bestScore = score;
@@ -87,19 +87,14 @@ Move AI::findBestMove(ChessBoard* board, bool isWhite) {
         delete newBoard;
     }
 
-    std::cout << "Best score: " << bestScore << std::endl;
     return bestMove;
 }
 
 void AI::makeMove(ChessBoard* board, bool isWhite) {
     Move bestMove = findBestMove(board, isWhite);
 
-    std::cout << "AI move: " << board->xyToChessPos(bestMove.fromX, bestMove.fromY);
-    std::cout << " -> " << board->xyToChessPos(bestMove.toX, bestMove.toY);
-    std::cout << " (" << bestMove.score << ")" << std::endl;
-
     if (!board->movePiece(bestMove.fromX, bestMove.fromY, bestMove.toX, bestMove.toY, isWhite)) {
-        std::cout << "AI move failed" << std::endl;
+        std::cout << "AI move failed, this should not happen" << std::endl;
     }
 }
 
@@ -143,7 +138,6 @@ bool AI::isValidAttack(ChessBoard* board, ChessPiece* piece, const Move& move) {
 }
 
 float AI::getValueForPiece(ChessPiece* piece) {
-    // Assign values to each piece
     switch (toupper(piece->getSymbol())) {
         case 'P':
             return 10.0f;
@@ -158,7 +152,7 @@ float AI::getValueForPiece(ChessPiece* piece) {
         case 'K':
             return 900.0f;
         default:
-            std::cout << "!!!!!!! Unknown piece type" << std::endl;
-            return 12.4f;  // Unknown piece type
+            std::cout << "Error: piece type missing" << std::endl;
+            return -0.0f;  // Unknown piece type
     }
 }
