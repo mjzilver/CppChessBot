@@ -5,17 +5,14 @@
 
 class Queen : public ChessPiece {
 public:
-    Queen(int x, int y, bool isWhite) : ChessPiece(x, y, isWhite, 9) {}
+    Queen(int x, int y, bool isWhite) : ChessPiece(x, y, isWhite) {}
 
-    // Deep copy constructor for Bishop
     Queen(const Queen& other) : ChessPiece(other) {
         x = other.x;
         y = other.y;
-        price = other.price;
         isWhite = other.isWhite;
     }
 
-    // Clone function for Bishop
     ChessPiece* clone() const override { return new Queen(*this); }
 
     char getSymbol() const override { return isWhite ? 'Q' : 'q'; }

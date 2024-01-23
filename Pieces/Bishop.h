@@ -7,17 +7,14 @@
 
 class Bishop : public ChessPiece {
 public:
-    Bishop(int x, int y, bool isWhite) : ChessPiece(x, y, isWhite, 3) {}
+    Bishop(int x, int y, bool isWhite) : ChessPiece(x, y, isWhite) {}
 
-    // Deep copy constructor for Bishop
     Bishop(const Bishop& other) : ChessPiece(other) {
         x = other.x;
         y = other.y;
-        price = other.price;
         isWhite = other.isWhite;
     }
 
-    // Clone function for Bishop
     ChessPiece* clone() const override { return new Bishop(*this); }
 
     char getSymbol() const override { return isWhite ? 'B' : 'b'; }

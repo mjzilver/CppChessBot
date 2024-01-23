@@ -5,17 +5,14 @@
 
 class Rook : public ChessPiece {
 public:
-    Rook(int x, int y, bool isWhite) : ChessPiece(x, y, isWhite, 5) {}
+    Rook(int x, int y, bool isWhite) : ChessPiece(x, y, isWhite) {}
 
-    // Deep copy constructor for Bishop
     Rook(const Rook& other) : ChessPiece(other) {
         x = other.x;
         y = other.y;
-        price = other.price;
         isWhite = other.isWhite;
     }
 
-    // Clone function for Bishop
     ChessPiece* clone() const override { return new Rook(*this); }
 
     char getSymbol() const override { return isWhite ? 'R' : 'r'; }

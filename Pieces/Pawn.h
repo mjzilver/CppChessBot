@@ -8,17 +8,14 @@
 
 class Pawn : public ChessPiece {
 public:
-    Pawn(int x, int y, bool isWhite) : ChessPiece(x, y, isWhite, 1) {}
+    Pawn(int x, int y, bool isWhite) : ChessPiece(x, y, isWhite) {}
 
-    // Deep copy constructor for Bishop
     Pawn(const Pawn& other) : ChessPiece(other) {
         x = other.x;
         y = other.y;
-        price = other.price;
         isWhite = other.isWhite;
     }
 
-    // Clone function for Bishop
     ChessPiece* clone() const override { return new Pawn(*this); }
 
     char getSymbol() const override { return isWhite ? 'P' : 'p'; }
@@ -57,6 +54,15 @@ public:
 
         // Diagonal attack
         if (abs(dx) == 1 && abs(dy) == 1 && y - toY == -direction) {
+            // Check if there is a piece to attack
+            if (board->getPiece(toX, toY) == nullptr) {
+                return false;
+            }
+            // Check if the piece is an enemy
+            if (board->getPiece(toX, toY)->getIsWhite() == isWhite) {
+                return false;
+            }
+
             return true;
         }
 

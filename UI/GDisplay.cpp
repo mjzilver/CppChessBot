@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <thread>
 
 #include "../AI/AI.h"
 
@@ -27,8 +28,12 @@ void GDisplay::drawLoop(ChessBoard &board) {
         handleInput(board);
 
         if (!isCurrentPlayerWhite) {
-            AI ai(5);
+            AI ai(3);
             ai.makeMove(&board, false);
+            isCurrentPlayerWhite = !isCurrentPlayerWhite;
+        } else {
+            AI ai(3);
+            ai.makeMove(&board, true);
             isCurrentPlayerWhite = !isCurrentPlayerWhite;
         }
 
@@ -178,6 +183,8 @@ void GDisplay::handleMouseClick(sf::Event::MouseButtonEvent &mouse, ChessBoard &
         int rowIndex = static_cast<int>(viewCoordinates.y / squareSize);
 
         handleValidChessboardClick(colIndex, rowIndex, board);
+    } else if (mouse.button == sf::Mouse::Right) {
+        selectedPiece = nullptr;
     }
 }
 

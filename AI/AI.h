@@ -1,7 +1,4 @@
-// AI.h
-
-#ifndef AI_H
-#define AI_H
+#pragma once
 
 #include "../ChessBoard.h"
 
@@ -20,16 +17,18 @@ public:
 private:
     int maxDepth;
 
+    // evals
     Move findBestMove(ChessBoard* board, bool isWhite);
     float evaluatePosition(ChessBoard* board, bool isWhite);
+    float calculateCenterPoints(int x, int y);
     float minimax(ChessBoard* board, int depth, float alpha, float beta, bool maximizingPlayer, bool isWhite);
 
+    // helper functions
     std::vector<Move> getMovesForPiece(ChessBoard* board, ChessPiece* piece);
     float getValueForPiece(ChessPiece* piece);
 
+    // move generation
     std::vector<Move> generateMoves(ChessBoard* board, bool isWhite);
     bool isValidMove(ChessBoard* board, ChessPiece* piece, const Move& move);
     bool isValidAttack(ChessBoard* board, ChessPiece* piece, const Move& move);
 };
-
-#endif  // AI_H
