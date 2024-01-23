@@ -99,8 +99,7 @@ bool ChessBoard::movePiece(int fromX, int fromY, int toX, int toY, bool isWhite,
     // check if there is a piece at the to coordinates
     ChessPiece *pieceAtTo = getPiece(toX, toY);
     if (pieceAtTo != nullptr) {
-        // check if the piece at the to coordinates is the same color as the
-        // piece at the from coordinates
+        // check if the piece at the to coordinates is the same color as the piece at the from coordinates
         if (pieceAtTo->getIsWhite() == piece->getIsWhite()) {
             return false;
         } else if (piece->canAttack(toX, toY, this)) {

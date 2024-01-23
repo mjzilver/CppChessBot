@@ -3,6 +3,8 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
+#include "../AI/AI.h"
+
 GDisplay::GDisplay() : window(sf::VideoMode(500u, 500u), "Chess Game"), squareSize(60), margin(25) {
     loadPieceTextures(pieceTextures);
     if (!font.loadFromFile("../resources/OpenSans-Regular.ttf")) {
@@ -23,6 +25,12 @@ GDisplay::~GDisplay() { pieceTextures.clear(); }
 void GDisplay::drawLoop(ChessBoard &board) {
     while (window.isOpen()) {
         handleInput(board);
+
+        if (!isCurrentPlayerWhite) {
+            AI ai(5);
+            ai.makeMove(&board, false);
+            isCurrentPlayerWhite = !isCurrentPlayerWhite;
+        }
 
         drawBoard(board);
     }

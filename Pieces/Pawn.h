@@ -8,7 +8,7 @@
 
 class Pawn : public ChessPiece {
 public:
-    Pawn(int x, int y, bool isWhite) : ChessPiece(x, y, isWhite) {}
+    Pawn(int x, int y, bool isWhite) : ChessPiece(x, y, isWhite, 1) {}
 
     char getSymbol() const override { return isWhite ? 'P' : 'p'; }
 

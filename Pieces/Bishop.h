@@ -7,7 +7,7 @@
 
 class Bishop : public ChessPiece {
 public:
-    Bishop(int x, int y, bool isWhite) : ChessPiece(x, y, isWhite) {}
+    Bishop(int x, int y, bool isWhite) : ChessPiece(x, y, isWhite, 3) {}
 
     char getSymbol() const override { return isWhite ? 'B' : 'b'; }
 

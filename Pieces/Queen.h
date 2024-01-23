@@ -5,7 +5,7 @@
 
 class Queen : public ChessPiece {
 public:
-    Queen(int x, int y, bool isWhite) : ChessPiece(x, y, isWhite) {}
+    Queen(int x, int y, bool isWhite) : ChessPiece(x, y, isWhite, 9) {}
 
     char getSymbol() const override { return isWhite ? 'Q' : 'q'; }
 

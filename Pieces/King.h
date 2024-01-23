@@ -7,7 +7,7 @@
 
 class King : public ChessPiece {
 public:
-    King(int x, int y, bool isWhite) : ChessPiece(x, y, isWhite) {}
+    King(int x, int y, bool isWhite) : ChessPiece(x, y, isWhite, 20) {}
 
     char getSymbol() const override { return isWhite ? 'K' : 'k'; }
 
