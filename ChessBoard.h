@@ -7,14 +7,18 @@
 
 class ChessBoard {
 private:
-    char board[8][8];
-
     bool _gameOver = false;
 
     std::vector<ChessPiece *> pieces = std::vector<ChessPiece *>();
 
 public:
     ChessBoard();
+    // deep copy constructor
+    ChessBoard(const ChessBoard &other) : _gameOver(other._gameOver) {
+        for (int i = 0; i < other.pieces.size(); ++i) {
+            pieces.push_back(other.pieces[i]->clone());
+        }
+    }
     ~ChessBoard();
 
     // board functions

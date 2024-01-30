@@ -9,6 +9,14 @@ class Bishop : public ChessPiece {
 public:
     Bishop(int x, int y, bool isWhite) : ChessPiece(x, y, isWhite) {}
 
+    Bishop(const Bishop& other) : ChessPiece(other) {
+        x = other.x;
+        y = other.y;
+        isWhite = other.isWhite;
+    }
+
+    ChessPiece* clone() const override { return new Bishop(*this); }
+
     char getSymbol() const override { return isWhite ? 'B' : 'b'; }
 
     bool canMoveTo(int toX, int toY, const ChessBoard* board) override {

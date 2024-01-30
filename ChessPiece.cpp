@@ -2,8 +2,6 @@
 
 #include "ChessBoard.h"
 
-ChessPiece::ChessPiece(int x, int y, bool isWhite) : x(x), y(y), isWhite(isWhite) {}
-
 void ChessPiece::moveTo(int toX, int toY) {
     x = toX;
     y = toY;

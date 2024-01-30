@@ -7,6 +7,14 @@ class Rook : public ChessPiece {
 public:
     Rook(int x, int y, bool isWhite) : ChessPiece(x, y, isWhite) {}
 
+    Rook(const Rook& other) : ChessPiece(other) {
+        x = other.x;
+        y = other.y;
+        isWhite = other.isWhite;
+    }
+
+    ChessPiece* clone() const override { return new Rook(*this); }
+
     char getSymbol() const override { return isWhite ? 'R' : 'r'; }
 
     bool canMoveTo(int toX, int toY, const ChessBoard* board) override {

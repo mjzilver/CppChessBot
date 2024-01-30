@@ -20,6 +20,8 @@ set(SOURCE_FILES
     ChessBoard.cpp
     ChessPiece.h
     ChessPiece.cpp
+    AI/AI.h
+    AI/AI.cpp
     UI/GDisplay.h
     UI/GDisplay.cpp
     UI/ConsoleDisplay.h

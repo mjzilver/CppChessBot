@@ -7,6 +7,14 @@ class Queen : public ChessPiece {
 public:
     Queen(int x, int y, bool isWhite) : ChessPiece(x, y, isWhite) {}
 
+    Queen(const Queen& other) : ChessPiece(other) {
+        x = other.x;
+        y = other.y;
+        isWhite = other.isWhite;
+    }
+
+    ChessPiece* clone() const override { return new Queen(*this); }
+
     char getSymbol() const override { return isWhite ? 'Q' : 'q'; }
 
     bool canMoveTo(int toX, int toY, const ChessBoard* board) override {
