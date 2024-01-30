@@ -10,16 +10,12 @@
 #include <random>
 
 #include "../ChessBoard.h"
-#include "../ChessPiece.h"
 
 void AI::makeMove(ChessBoard* board, bool isWhite) {
     auto start_time = std::chrono::high_resolution_clock::now();
     Move bestMove = findBestMove(board, isWhite);
 
-    std::cout << "Best move: " << board->xyToChessPos(bestMove.fromX, bestMove.fromY);
-    std::cout << " to " << board->xyToChessPos(bestMove.toX, bestMove.toY) << std::endl;
-
-    if (!board->movePiece(bestMove.fromX, bestMove.fromY, bestMove.toX, bestMove.toY, isWhite)) {
+    if (!board->movePiece(bestMove.fromX, bestMove.fromY, bestMove.toX, bestMove.toY)) {
         std::cout << "AI move failed, this should not happen" << std::endl;
     }
     auto end_time = std::chrono::high_resolution_clock::now();
@@ -38,7 +34,7 @@ Move AI::findBestMove(ChessBoard* board, bool isWhite) {
 
     for (const auto& move : moves) {
         ChessBoard* newBoard = new ChessBoard(*board);
-        newBoard->movePiece(move.fromX, move.fromY, move.toX, move.toY, isWhite);
+        newBoard->movePiece(move.fromX, move.fromY, move.toX, move.toY);
         boardsToDelete.push_back(newBoard);
 
         futures.push_back(
@@ -70,16 +66,33 @@ Move AI::findBestMove(ChessBoard* board, bool isWhite) {
 std::vector<Move> AI::generateMoves(ChessBoard* board, bool isWhite) {
     auto availableMoves = std::vector<Move>();
 
-    // loop over all pieces
-    auto pieces = board->getPieces();
+    // Get all pieces for the current player and generate moves for each piece
+    uint64_t boardPieces = board->getBoard(isWhite);
 
-    for (auto piece : pieces) {
-        if (piece->getIsWhite() == isWhite) {
-            // loop over all possible moves
-            auto moves = getMovesForPiece(board, piece);
+    // Loop through all pieces in the bitboard
+    while (boardPieces) {
+        int index = __builtin_ctzll(boardPieces);
+        int x = index % 8;
+        int y = index / 8;
 
-            availableMoves.insert(availableMoves.end(), moves.begin(), moves.end());
+        auto piece = board->getPieceTypeAt(x, y);
+
+        auto moves = board->getAllValidMovesForPiece(x, y);
+
+        // Loop through all moves in the bitboard
+        while (moves) {
+            int moveIndex = __builtin_ctzll(moves);
+            int newX = moveIndex % 8;
+            int newY = moveIndex / 8;
+
+            Move move = {x, y, newX, newY, 0.0f};
+
+            availableMoves.push_back(move);
+
+            moves &= moves - 1;
         }
+
+        boardPieces &= boardPieces - 1;
     }
 
     return availableMoves;
@@ -95,7 +108,7 @@ float AI::minimax(ChessBoard* board, int depth, float alpha, float beta, bool ma
 
     for (const auto& move : moves) {
         ChessBoard* newBoard = new ChessBoard(*board);
-        newBoard->movePiece(move.fromX, move.fromY, move.toX, move.toY, isWhite);
+        newBoard->movePiece(move.fromX, move.fromY, move.toX, move.toY);
 
         float score = minimax(newBoard, depth - 1, alpha, beta, !maximizingPlayer, !isWhite);
 
@@ -117,35 +130,39 @@ float AI::minimax(ChessBoard* board, int depth, float alpha, float beta, bool ma
     return bestScore;
 }
 
-bool AI::isValidMove(ChessBoard* board, ChessPiece* piece, const Move& move) {
-    if (piece->canAttack(move.toX, move.toY, board) || piece->canMoveTo(move.toX, move.toY, board)) {
-        return true;
-    }
-    return false;
-}
-
 float AI::evaluatePosition(ChessBoard* board, bool isWhite) {
     float whiteScore = 0.0f;
     float blackScore = 0.0f;
 
-    auto pieces = board->getPieces();
+    auto whitePieces = board->getBoard(true);
+    auto blackPieces = board->getBoard(false);
 
-    for (auto piece : pieces) {
-        float pieceValue = getValueForPiece(piece);
+    // Loop through all pieces in the bitboard
+    while (whitePieces) {
+        int index = __builtin_ctzll(whitePieces);
+        int x = index % 8;
+        int y = index / 8;
 
-        if (piece->getIsWhite()) {
-            whiteScore += pieceValue;
-        } else {
-            blackScore += pieceValue;
-        }
+        auto piece = board->getPieceTypeAt(x, y);
 
-        float centerPoints = calculateCenterPoints(piece->getX(), piece->getY());
+        whiteScore += getValueForPiece(piece);
+        whiteScore += calculateCenterPoints(x, y);
 
-        if (piece->getIsWhite()) {
-            whiteScore += centerPoints;
-        } else {
-            blackScore += centerPoints;
-        }
+        whitePieces &= whitePieces - 1;
+    }
+
+    // Loop through all pieces in the bitboard
+    while (blackPieces) {
+        int index = __builtin_ctzll(blackPieces);
+        int x = index % 8;
+        int y = index / 8;
+
+        auto piece = board->getPieceTypeAt(x, y);
+
+        blackScore += getValueForPiece(piece);
+        blackScore += calculateCenterPoints(x, y);
+
+        blackPieces &= blackPieces - 1;
     }
 
     return isWhite ? (whiteScore - blackScore) : (blackScore - whiteScore);
@@ -166,42 +183,22 @@ float AI::calculateCenterPoints(int x, int y) {
     return centerPoints;
 }
 
-std::vector<Move> AI::getMovesForPiece(ChessBoard* board, ChessPiece* piece) {
-    auto moves = std::vector<Move>();
 
-    for (int i = 0; i < 8; ++i) {
-        for (int j = 0; j < 8; ++j) {
-            auto move = Move{piece->getX(), piece->getY(), i, j, 0};
-
-            if (isValidMove(board, piece, move)) {
-                moves.push_back(move);
-            }
-        }
-    }
-
-    return moves;
-}
-
-bool AI::isValidAttack(ChessBoard* board, ChessPiece* piece, const Move& move) {
-    return piece->canAttack(move.toX, move.toY, board);
-}
-
-float AI::getValueForPiece(ChessPiece* piece) {
-    switch (toupper(piece->getSymbol())) {
-        case 'P':
+float AI::getValueForPiece(PieceType piece) {
+    switch (piece) {
+        case PAWN:
             return 10.0f;
-        case 'N':
+        case KNIGHT:
             return 30.0f;
-        case 'B':
+        case BISHOP:
             return 30.0f;
-        case 'R':
+        case ROOK:
             return 50.0f;
-        case 'Q':
+        case QUEEN:
             return 90.0f;
-        case 'K':
-            return 900.0f;
+        case KING:
+            return 1000.0f;
         default:
-            std::cout << "Error: piece type missing" << std::endl;
-            return -0.0f;
+            return 0.0f;
     }
 }

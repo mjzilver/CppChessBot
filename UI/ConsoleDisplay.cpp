@@ -1,17 +1,38 @@
 #include "ConsoleDisplay.h"
-
+#include "../PieceType.h"
 #include <iostream>
 
 void ConsoleDisplay::drawBoard(const ChessBoard &board) {
     for (int i = 0; i < 8; ++i) {
         std::cout << 8 - i << ' ';
         for (int j = 0; j < 8; ++j) {
-            auto piece = board.getPiece(j, i);
-            if (piece == nullptr) {
+            PieceType piece = board.getPieceTypeAt(j, i);
+            bool isWhite = board.isPieceAt(j, i, true);
+            if (piece == -1) {
                 // No piece at this location
                 std::cout << ' ';
             } else {
-                std::cout << piece->getSymbol();
+                switch (piece)
+                {
+                case PAWN:
+                    std::cout << (isWhite ? 'P' : 'p');
+                    break;
+                case ROOK:
+                    std::cout << (isWhite ? 'R' : 'r');
+                    break;
+                case KNIGHT:   
+                    std::cout << (isWhite ? 'N' : 'n'); 
+                    break;
+                case BISHOP:    
+                    std::cout << (isWhite ? 'B' : 'b');
+                    break;  
+                case QUEEN: 
+                    std::cout << (isWhite ? 'Q' : 'q');
+                    break;
+                case KING:
+                    std::cout << (isWhite ? 'K' : 'k');
+                    break;
+                }
             }
             std::cout << ' ';
         }
@@ -27,7 +48,7 @@ std::string ConsoleDisplay::receiveInput() {
 }
 
 void ConsoleDisplay::drawLoop(ChessBoard &board) {
-    while (board.isGameOver() == false) {
+    while (true) {
         handleInput(board);
     }
 
@@ -47,7 +68,7 @@ bool ConsoleDisplay::makeMove(ChessBoard &board, const std::string &moveInput, b
     int toX = tolower(moveInput[2]) - 'a';
     int toY = '8' - moveInput[3];
 
-    if (board.movePiece(fromX, fromY, toX, toY, isWhite, moveInput.size() == 5 ? moveInput[4] : 'Q')) {
+    if (board.movePiece(fromX, fromY, toX, toY)) {
         return true;
     } else {
         std::cout << "Invalid move. Please try again." << std::endl;

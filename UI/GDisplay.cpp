@@ -30,11 +30,7 @@ void GDisplay::drawLoop(ChessBoard &board) {
         if (!isCurrentPlayerWhite) {
             AI ai(3);
             ai.makeMove(&board, false);
-            isCurrentPlayerWhite = !isCurrentPlayerWhite;
-        } else {
-            AI ai(3);
-            ai.makeMove(&board, true);
-            isCurrentPlayerWhite = !isCurrentPlayerWhite;
+            isCurrentPlayerWhite = true;
         }
 
         drawBoard(board);
@@ -76,26 +72,28 @@ void GDisplay::drawBoard(const ChessBoard &board) {
             }
 
             // if selected piece is not null, draw possible moves
-            if (selectedPiece != nullptr) {
-                if (board.getPiece(j, i) != nullptr && selectedPiece->canAttack(j, i, &board)) {
+            if (selectedPiece.symbol != ' ') {
+                if (board.getPieceSymbol(j, i) != ' ' && board.isValidAttack(selectedPiece.x, selectedPiece.y, j, i)) {
                     drawSquare(j, i, sf::Color(255, 0, 0, 100));
-                } else if (selectedPiece->canMoveTo(j, i, &board)) {
+                } else if (board.isValidMove(selectedPiece.x, selectedPiece.y, j, i)) {
                     drawCircle(j, i, 0.5, sf::Color(0, 255, 0, 100));
                 }
             }
 
             // draw piece on square
-            auto piece = board.getPiece(j, i);
-            if (piece == nullptr) {
-                continue;
-            }
+            char piece = board.getPieceSymbol(j, i);
+            bool isWhite = board.isPieceAt(j, i, true);
 
-            char pieceSymbol = piece->getSymbol();
+            if (piece == ' ') continue;
+
+            char pieceSymbol = isWhite ? toupper(piece) : tolower(piece);
 
             auto it = pieceTextures.find(pieceSymbol);
             if (it != pieceTextures.end()) {
                 // draw a circle around the selected piece
-                if (selectedPiece != nullptr && piece == selectedPiece) {
+                SelectionPiece currentPiece = {j, i, pieceSymbol, isWhite};
+
+                if (currentPiece == selectedPiece) {
                     drawCircleOutline(j, i, 0.8, sf::Color(0, 0, 255, 100));
                 }
 
@@ -184,42 +182,22 @@ void GDisplay::handleMouseClick(sf::Event::MouseButtonEvent &mouse, ChessBoard &
 
         handleValidChessboardClick(colIndex, rowIndex, board);
     } else if (mouse.button == sf::Mouse::Right) {
-        selectedPiece = nullptr;
+        selectedPiece.symbol = ' ';
     }
 }
 
 void GDisplay::handleValidChessboardClick(int colIndex, int rowIndex, ChessBoard &board) {
-    auto clickedPiece = board.getPiece(colIndex, rowIndex);
+    SelectionPiece clickedPiece = {colIndex, rowIndex, board.getPieceSymbol(colIndex, rowIndex),
+                                   board.isPieceAt(colIndex, rowIndex, true)};
 
-    if (selectedPiece != nullptr) {
-        handleSelectedPieceClick(clickedPiece, colIndex, rowIndex, board);
+    if (selectedPiece.symbol != ' ') {
+        if (board.movePiece(selectedPiece.x, selectedPiece.y, colIndex, rowIndex)) {
+            selectedPiece.symbol = ' ';
+            isCurrentPlayerWhite = !isCurrentPlayerWhite;
+        } else {
+            selectedPiece = clickedPiece;
+        }
     } else {
         selectedPiece = clickedPiece;
     }
-}
-
-void GDisplay::handleSelectedPieceClick(ChessPiece *clickedPiece, int colIndex, int rowIndex, ChessBoard &board) {
-    if (clickedPiece != nullptr) {
-        handleMoveToOccupiedSquare(clickedPiece, colIndex, rowIndex, board);
-    } else if (selectedPiece->canMoveTo(colIndex, rowIndex, &board)) {
-        handleMoveToEmptySquare(colIndex, rowIndex, board);
-    } else {
-        selectedPiece = nullptr;
-    }
-}
-
-void GDisplay::handleMoveToOccupiedSquare(ChessPiece *clickedPiece, int colIndex, int rowIndex, ChessBoard &board) {
-    if (board.movePiece(selectedPiece->getX(), selectedPiece->getY(), colIndex, rowIndex, isCurrentPlayerWhite)) {
-        isCurrentPlayerWhite = !isCurrentPlayerWhite;
-        selectedPiece = nullptr;
-    } else {
-        selectedPiece = clickedPiece;
-    }
-}
-
-void GDisplay::handleMoveToEmptySquare(int colIndex, int rowIndex, ChessBoard &board) {
-    if (board.movePiece(selectedPiece->getX(), selectedPiece->getY(), colIndex, rowIndex, isCurrentPlayerWhite)) {
-        isCurrentPlayerWhite = !isCurrentPlayerWhite;
-    }
-    selectedPiece = nullptr;
 }
