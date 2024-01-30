@@ -3,6 +3,16 @@ project(CppChess)
 
 set(CMAKE_CXX_STANDARD 17)
 
+# if windows
+if(WIN32)
+    # Set the C compiler
+    set(CMAKE_C_COMPILER "C:/mingw64/bin/gcc.exe")
+    # Set the C++ compiler
+    set(CMAKE_CXX_COMPILER "C:/mingw64/bin/g++.exe")
+    # build for mingw and NOT visual studio
+    set(CMAKE_GENERATOR "MinGW Makefiles")
+endif()
+
 # Add the source files
 set(SOURCE_FILES
     main.cpp
@@ -44,6 +54,11 @@ add_executable(runUnitTests
     Tests/KingTest.cpp
 )
 
+# if win
+if(WIN32)
+    # set the path to the SFML libraries
+    set(SFML_DIR "C:/Program Files/SFML-2.6.1/lib/cmake/SFML")
+endif()
 find_package(SFML COMPONENTS graphics REQUIRED)
 
 # link gtest to test executable
