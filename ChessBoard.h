@@ -13,6 +13,14 @@ private:
     uint64_t pieces[6] = {0, 0, 0, 0, 0, 0};
 
 public:
+    ChessBoard() { }
+    ChessBoard(ChessBoard* other) {
+        whitePieces = other->whitePieces;
+        blackPieces = other->blackPieces;
+        for (int i = 0; i < 6; ++i) {
+            pieces[i] = other->pieces[i];
+        }
+    }
     // board functions
     void resetBoard();
     void emptyBoard();
@@ -31,7 +39,8 @@ public:
     bool removePieceAt(int x, int y);
     PieceType getPieceTypeAt(int x, int y) const;
     bool movePiece(int x, int y, int newX, int newY);
-    uint64_t getAllValidMovesForPiece(int x, int y);
+    uint64_t getValidMoves(int x, int y);
+    uint64_t getValidAttacks(int x, int y);
     bool isValidMove(int x, int y, int newX, int newY) const;
     bool isPathClear(int startX, int startY, int endX, int endY) const;
     bool isValidAttack(int x, int y, int newX, int newY) const;

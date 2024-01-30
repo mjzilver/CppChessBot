@@ -187,8 +187,7 @@ void GDisplay::handleMouseClick(sf::Event::MouseButtonEvent &mouse, ChessBoard &
 }
 
 void GDisplay::handleValidChessboardClick(int colIndex, int rowIndex, ChessBoard &board) {
-    SelectionPiece clickedPiece = {colIndex, rowIndex, board.getPieceSymbol(colIndex, rowIndex),
-                                   board.isPieceAt(colIndex, rowIndex, true)};
+    SelectionPiece clickedPiece = {colIndex, rowIndex, board.getPieceSymbol(colIndex, rowIndex), board.isPieceAt(colIndex, rowIndex, true)};
 
     if (selectedPiece.symbol != ' ') {
         if (board.movePiece(selectedPiece.x, selectedPiece.y, colIndex, rowIndex)) {

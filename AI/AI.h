@@ -22,7 +22,7 @@ private:
     // evals
     Move findBestMove(ChessBoard* board, bool isWhite);
     float evaluatePosition(ChessBoard* board, bool isWhite);
-    float calculateCenterPoints(int x, int y);
+    int piecePositionScore(int x, int y, char symbol, bool isWhite);
     float getValueForPiece(PieceType piece);
     float minimax(ChessBoard* board, int depth, float alpha, float beta, bool maximizingPlayer, bool isWhite);
 

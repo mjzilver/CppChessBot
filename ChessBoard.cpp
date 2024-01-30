@@ -146,11 +146,9 @@ bool ChessBoard::movePiece(int x, int y, int newX, int newY) {
     return false;
 }
 
-uint64_t ChessBoard::getAllValidMovesForPiece(int x, int y) {
-    // Returns a bitboard with all valid moves for the piece at x, y
+uint64_t ChessBoard::getValidMoves(int x, int y) {
+    // Returns a bitboard with all valid non-attack moves for the piece at x, y
     uint64_t validMoves = 0;
-
-    uint64_t piece = 1ULL << (x + y * 8);
 
     int64_t emptySquares = ~getBoard();
 
@@ -162,8 +160,6 @@ uint64_t ChessBoard::getAllValidMovesForPiece(int x, int y) {
 
         if (isValidMove(x, y, newX, newY)) {
             validMoves |= 1ULL << index;
-        } else if (isValidAttack(x, y, newX, newY)) {
-            validMoves |= 1ULL << index;
         }
 
         emptySquares &= emptySquares - 1;
@@ -171,6 +167,31 @@ uint64_t ChessBoard::getAllValidMovesForPiece(int x, int y) {
 
     return validMoves;
 }
+
+uint64_t ChessBoard::getValidAttacks(int x, int y) {
+    // Returns a bitboard with all valid attacks for the piece at x, y
+    uint64_t validAttacks = 0;
+
+    auto color = getPieceColor(x, y);
+
+    int64_t enemyPieces = getBoard(!color);
+
+    // loop over all enemy pieces and check if the piece can attack them
+    while (enemyPieces) {
+        int index = __builtin_ctzll(enemyPieces);
+        int enemyX = index % 8;
+        int enemyY = index / 8;
+
+        if (isValidAttack(x, y, enemyX, enemyY)) {
+            validAttacks |= 1ULL << index;
+        }
+
+        enemyPieces &= enemyPieces - 1;
+    }
+
+    return validAttacks;
+}
+
 
 bool ChessBoard::isValidMove(int x, int y, int newX, int newY) const {
     if (isPieceAt(x, y)) {

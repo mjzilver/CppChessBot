@@ -10,6 +10,7 @@
 #include <random>
 
 #include "../ChessBoard.h"
+#include "PieceSqTable.h"
 
 void AI::makeMove(ChessBoard* board, bool isWhite) {
     auto start_time = std::chrono::high_resolution_clock::now();
@@ -38,15 +39,11 @@ Move AI::findBestMove(ChessBoard* board, bool isWhite) {
         boardsToDelete.push_back(newBoard);
 
         futures.push_back(
-            std::async(std::launch::async, &AI::minimax, this, newBoard, maxDepth, -10000, 10000, true, !isWhite));
+            std::async(std::launch::async, &AI::minimax, this, newBoard, maxDepth, -10000, 10000, false, !isWhite));
     }
 
     for (size_t i = 0; i < moves.size(); ++i) {
-        // Add some randomness to the score to prevent the AI from always making the same move
-        int randomizer = std::chrono::system_clock::now().time_since_epoch().count();
-        float randomScore = (float)std::rand() / (float)RAND_MAX;
-
-        float score = futures[i].get() + randomScore;
+        float score = futures[i].get();
 
         if (score > bestScore) {
             bestScore = score;
@@ -77,7 +74,23 @@ std::vector<Move> AI::generateMoves(ChessBoard* board, bool isWhite) {
 
         auto piece = board->getPieceTypeAt(x, y);
 
-        auto moves = board->getAllValidMovesForPiece(x, y);
+        auto attacks = board->getValidAttacks(x, y);
+        auto moves = board->getValidMoves(x, y);
+
+        // Loop through all attacks in the bitboard
+        while (attacks) {
+            int attackIndex = __builtin_ctzll(attacks);
+            int newX = attackIndex % 8;
+            int newY = attackIndex / 8;
+
+            int score = getValueForPiece(board->getPieceTypeAt(newX, newY));
+
+            Move move = {x, y, newX, newY, score};
+
+            availableMoves.push_back(move);
+
+            attacks &= attacks - 1;
+        }
 
         // Loop through all moves in the bitboard
         while (moves) {
@@ -85,7 +98,9 @@ std::vector<Move> AI::generateMoves(ChessBoard* board, bool isWhite) {
             int newX = moveIndex % 8;
             int newY = moveIndex / 8;
 
-            Move move = {x, y, newX, newY, 0.0f};
+            int score = piecePositionScore(newX, newY, piece, isWhite);            
+
+            Move move = {x, y, newX, newY, score};
 
             availableMoves.push_back(move);
 
@@ -146,7 +161,7 @@ float AI::evaluatePosition(ChessBoard* board, bool isWhite) {
         auto piece = board->getPieceTypeAt(x, y);
 
         whiteScore += getValueForPiece(piece);
-        whiteScore += calculateCenterPoints(x, y);
+        whiteScore += piecePositionScore(x, y, piece, true);
 
         whitePieces &= whitePieces - 1;
     }
@@ -160,7 +175,7 @@ float AI::evaluatePosition(ChessBoard* board, bool isWhite) {
         auto piece = board->getPieceTypeAt(x, y);
 
         blackScore += getValueForPiece(piece);
-        blackScore += calculateCenterPoints(x, y);
+        blackScore += piecePositionScore(x, y, piece, false);
 
         blackPieces &= blackPieces - 1;
     }
@@ -168,21 +183,24 @@ float AI::evaluatePosition(ChessBoard* board, bool isWhite) {
     return isWhite ? (whiteScore - blackScore) : (blackScore - whiteScore);
 }
 
-float AI::calculateCenterPoints(int x, int y) {
-    float centerX = 3.5f;
-    float centerY = 3.5f;
-
-    float distanceX = std::min(x, 7 - x);
-    float distanceY = std::min(y, 7 - y);
-
-    float maxDistance = std::max(centerX, centerY);
-
-    float centerPoints = 1.0f - (std::min(distanceX, distanceY) / maxDistance);
-    centerPoints = std::max(centerPoints, 0.0f);  // Ensure points are not negative
-
-    return centerPoints;
+int AI::piecePositionScore(int x, int y, char symbol, bool isWhite) {
+    switch (toupper(symbol)) {
+        case 'P':
+            return PAWN_TABLE[isWhite ? 0 : 1][y * 8 + x];
+        case 'N':
+            return KNIGHT_TABLE[isWhite ? 0 : 1][y * 8 + x];
+        case 'B':
+            return BISHOP_TABLE[isWhite ? 0 : 1][y * 8 + x];
+        case 'R':
+            return ROOK_TABLE[isWhite ? 0 : 1][y * 8 + x];
+        case 'Q':
+            return QUEEN_TABLE[isWhite ? 0 : 1][y * 8 + x];
+        case 'K':
+            return KING_TABLE[isWhite ? 0 : 1][y * 8 + x];
+        default:
+            return 0;
+    }
 }
-
 
 float AI::getValueForPiece(PieceType piece) {
     switch (piece) {
