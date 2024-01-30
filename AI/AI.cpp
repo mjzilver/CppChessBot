@@ -6,6 +6,8 @@
 #include <limits>
 #include <thread>
 #include <vector>
+#include <cstdlib>
+#include <random>
 
 #include "../ChessBoard.h"
 #include "../ChessPiece.h"
@@ -45,8 +47,8 @@ Move AI::findBestMove(ChessBoard* board, bool isWhite) {
 
     for (size_t i = 0; i < moves.size(); ++i) {
         // Add some randomness to the score to prevent the AI from always making the same move
-        uint randomizer = std::chrono::system_clock::now().time_since_epoch().count();
-        float randomScore = (float)rand_r(&randomizer) / RAND_MAX;
+        int randomizer = std::chrono::system_clock::now().time_since_epoch().count();
+        float randomScore = (float)std::rand() / (float)RAND_MAX;
 
         float score = futures[i].get() + randomScore;
 
