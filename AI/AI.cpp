@@ -33,6 +33,10 @@ Move AI::findBestMove(ChessBoard* board, bool isWhite) {
     std::vector<std::future<float>> futures;
     std::vector<ChessBoard*> boardsToDelete;
 
+    // score must be messed up somewhere
+    // I think it's because the score is being calculated for the wrong player 
+    // or the score doesnt take into account the moves that could be made after the current move
+
     for (const auto& move : moves) {
         ChessBoard* newBoard = new ChessBoard(*board);
         newBoard->movePiece(move.fromX, move.fromY, move.toX, move.toY);
@@ -83,9 +87,7 @@ std::vector<Move> AI::generateMoves(ChessBoard* board, bool isWhite) {
             int newX = attackIndex % 8;
             int newY = attackIndex / 8;
 
-            int score = getValueForPiece(board->getPieceTypeAt(newX, newY));
-
-            Move move = {x, y, newX, newY, score};
+            Move move = {x, y, newX, newY, 0};
 
             availableMoves.push_back(move);
 
@@ -98,9 +100,7 @@ std::vector<Move> AI::generateMoves(ChessBoard* board, bool isWhite) {
             int newX = moveIndex % 8;
             int newY = moveIndex / 8;
 
-            int score = piecePositionScore(newX, newY, piece, isWhite);            
-
-            Move move = {x, y, newX, newY, score};
+            Move move = {x, y, newX, newY, 0};
 
             availableMoves.push_back(move);
 
@@ -115,7 +115,7 @@ std::vector<Move> AI::generateMoves(ChessBoard* board, bool isWhite) {
 
 float AI::minimax(ChessBoard* board, int depth, float alpha, float beta, bool maximizingPlayer, bool isWhite) {
     if (depth == 0) {
-        return evaluatePosition(board, isWhite);
+        return evaluatePosition(board);
     }
     float bestScore = maximizingPlayer ? -10000 : 10000;
 
@@ -145,7 +145,7 @@ float AI::minimax(ChessBoard* board, int depth, float alpha, float beta, bool ma
     return bestScore;
 }
 
-float AI::evaluatePosition(ChessBoard* board, bool isWhite) {
+float AI::evaluatePosition(ChessBoard* board) {
     float whiteScore = 0.0f;
     float blackScore = 0.0f;
 
@@ -180,22 +180,22 @@ float AI::evaluatePosition(ChessBoard* board, bool isWhite) {
         blackPieces &= blackPieces - 1;
     }
 
-    return isWhite ? (whiteScore - blackScore) : (blackScore - whiteScore);
+    return blackScore - whiteScore;
 }
 
-int AI::piecePositionScore(int x, int y, char symbol, bool isWhite) {
-    switch (toupper(symbol)) {
-        case 'P':
+int AI::piecePositionScore(int x, int y, PieceType type, bool isWhite) {
+    switch (type) {
+        case PAWN:
             return PAWN_TABLE[isWhite ? 0 : 1][y * 8 + x];
-        case 'N':
+        case KNIGHT:
             return KNIGHT_TABLE[isWhite ? 0 : 1][y * 8 + x];
-        case 'B':
+        case BISHOP:
             return BISHOP_TABLE[isWhite ? 0 : 1][y * 8 + x];
-        case 'R':
+        case ROOK:
             return ROOK_TABLE[isWhite ? 0 : 1][y * 8 + x];
-        case 'Q':
+        case QUEEN:
             return QUEEN_TABLE[isWhite ? 0 : 1][y * 8 + x];
-        case 'K':
+        case KING:
             return KING_TABLE[isWhite ? 0 : 1][y * 8 + x];
         default:
             return 0;
@@ -205,17 +205,17 @@ int AI::piecePositionScore(int x, int y, char symbol, bool isWhite) {
 float AI::getValueForPiece(PieceType piece) {
     switch (piece) {
         case PAWN:
-            return 10.0f;
+            return 25.0f;
         case KNIGHT:
-            return 30.0f;
-        case BISHOP:
-            return 30.0f;
-        case ROOK:
             return 50.0f;
+        case BISHOP:
+            return 50.0f;
+        case ROOK:
+            return 80.0f;
         case QUEEN:
-            return 90.0f;
+            return 10.0f;
         case KING:
-            return 1000.0f;
+            return 300.0f;
         default:
             return 0.0f;
     }

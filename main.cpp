@@ -3,12 +3,12 @@
 #include "ChessGame.h"
 
 int main(int argc, char* argv[]) {
-    bool useGui = false;
+    bool useGui = true;
 
-    // Check if "-gui" is passed as a command line argument
+    // Check if "-nogui" is passed as a command line argument
     for (int i = 1; i < argc; ++i) {
-        if (std::string(argv[i]) == "-gui") {
-            useGui = true;
+        if (std::string(argv[i]) == "-nogui") {
+            useGui = false;
             break;
         }
     }

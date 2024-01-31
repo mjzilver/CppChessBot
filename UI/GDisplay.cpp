@@ -27,8 +27,10 @@ void GDisplay::drawLoop(ChessBoard &board) {
     while (window.isOpen()) {
         handleInput(board);
 
+        drawBoard(board);
+        
         if (!isCurrentPlayerWhite) {
-            AI ai(3);
+            AI ai(5);
             ai.makeMove(&board, false);
             isCurrentPlayerWhite = true;
         }

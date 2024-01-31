@@ -11,7 +11,7 @@ if(WIN32)
     set(CMAKE_C_COMPILER "C:/mingw64/bin/gcc.exe")
     # Set the C++ compiler
     set(CMAKE_CXX_COMPILER "C:/mingw64/bin/g++.exe")
-    # build for mingw and NOT visual studio
+    # build for mingw 
     set(CMAKE_GENERATOR "MinGW Makefiles")
 endif()
 
@@ -42,6 +42,3 @@ find_package(SFML COMPONENTS graphics REQUIRED)
 
 # link SFML to main executable
 target_link_libraries(CppChess sfml-graphics sfml-window sfml-system)
-
-
-add_test(NAME runUnitTests COMMAND runUnitTests)

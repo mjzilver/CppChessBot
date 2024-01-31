@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../ChessBoard.h"
+#include "../PieceType.h"
 
 #include <vector>
 
@@ -21,8 +22,8 @@ private:
 
     // evals
     Move findBestMove(ChessBoard* board, bool isWhite);
-    float evaluatePosition(ChessBoard* board, bool isWhite);
-    int piecePositionScore(int x, int y, char symbol, bool isWhite);
+    float evaluatePosition(ChessBoard* board);
+    int piecePositionScore(int x, int y, PieceType type, bool isWhite);
     float getValueForPiece(PieceType piece);
     float minimax(ChessBoard* board, int depth, float alpha, float beta, bool maximizingPlayer, bool isWhite);
 
