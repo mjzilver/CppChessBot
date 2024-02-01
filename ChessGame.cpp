@@ -4,8 +4,6 @@
 #include <iostream>
 #include <thread>
 
-#include "AI/AI.h"
-#include "Pieces/Pawn.h"
 #include "UI/GDisplay.h"
 
 ChessGame::ChessGame() : board() {

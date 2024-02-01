@@ -4,7 +4,6 @@
 #include <map>
 
 #include "../ChessBoard.h"
-#include "../ChessPiece.h"
 #include "IDisplay.h"
 
 class GDisplay : public IDisplay {
@@ -16,13 +15,24 @@ public:
     void drawLoop(ChessBoard &board) override;
     void handleInput(ChessBoard &board) override;
 
+    struct SelectionPiece {
+        int x;
+        int y;
+        char symbol;
+        bool isWhite;
+
+        bool operator==(const SelectionPiece &other) const {
+            return x == other.x && y == other.y && symbol == other.symbol && isWhite == other.isWhite;
+        }
+    };
+
 private:
     sf::RenderWindow window;
     int squareSize;
     int margin;
     std::map<char, sf::Texture> pieceTextures;
     sf::Font font;
-    ChessPiece *selectedPiece = nullptr;
+    SelectionPiece selectedPiece = { 0, 0, ' ', true};
     bool isCurrentPlayerWhite = true;
 
     void loadPieceTextures(std::map<char, sf::Texture> &pieceTextures) const;
@@ -36,7 +46,4 @@ private:
     void handleEvent(sf::Event &event, ChessBoard &board);
     void handleMouseClick(sf::Event::MouseButtonEvent &mouse, ChessBoard &board);
     void handleValidChessboardClick(int colIndex, int rowIndex, ChessBoard &board);
-    void handleSelectedPieceClick(ChessPiece *clickedPiece, int colIndex, int rowIndex, ChessBoard &board);
-    void handleMoveToOccupiedSquare(ChessPiece *clickedPiece, int colIndex, int rowIndex, ChessBoard &board);
-    void handleMoveToEmptySquare(int colIndex, int rowIndex, ChessBoard &board);
 };
