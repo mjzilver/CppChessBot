@@ -1,6 +1,8 @@
 #include "ConsoleDisplay.h"
-#include "../PieceType.h"
+
 #include <iostream>
+
+#include "../PieceType.h"
 
 void ConsoleDisplay::drawBoard(const ChessBoard &board) {
     for (int i = 0; i < 8; ++i) {
@@ -12,26 +14,27 @@ void ConsoleDisplay::drawBoard(const ChessBoard &board) {
                 // No piece at this location
                 std::cout << ' ';
             } else {
-                switch (piece)
-                {
-                case PAWN:
-                    std::cout << (isWhite ? 'P' : 'p');
-                    break;
-                case ROOK:
-                    std::cout << (isWhite ? 'R' : 'r');
-                    break;
-                case KNIGHT:   
-                    std::cout << (isWhite ? 'N' : 'n'); 
-                    break;
-                case BISHOP:    
-                    std::cout << (isWhite ? 'B' : 'b');
-                    break;  
-                case QUEEN: 
-                    std::cout << (isWhite ? 'Q' : 'q');
-                    break;
-                case KING:
-                    std::cout << (isWhite ? 'K' : 'k');
-                    break;
+                switch (piece) {
+                    case PAWN:
+                        std::cout << (isWhite ? 'P' : 'p');
+                        break;
+                    case ROOK:
+                        std::cout << (isWhite ? 'R' : 'r');
+                        break;
+                    case KNIGHT:
+                        std::cout << (isWhite ? 'N' : 'n');
+                        break;
+                    case BISHOP:
+                        std::cout << (isWhite ? 'B' : 'b');
+                        break;
+                    case QUEEN:
+                        std::cout << (isWhite ? 'Q' : 'q');
+                        break;
+                    case KING:
+                        std::cout << (isWhite ? 'K' : 'k');
+                        break;
+                    default:
+                        break;
                 }
             }
             std::cout << ' ';
