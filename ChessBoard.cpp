@@ -45,12 +45,13 @@ void ChessBoard::resetBoard() {
 void ChessBoard::emptyBoard() {
     whitePieces = 0;
     blackPieces = 0;
-    for (int i = 0; i < 6; ++i) {
-        pieces[i] = 0;
-    }
+    pieces[PAWN] = 0;
+    pieces[ROOK] = 0;
+    pieces[KNIGHT] = 0;
+    pieces[BISHOP] = 0;
+    pieces[QUEEN] = 0;
+    pieces[KING] = 0;
 }
-
-uint64_t ChessBoard::getPieceLocation(int x, int y) const { return 1ULL << (x + y * 8); }
 
 char ChessBoard::getPieceSymbol(int x, int y) const {
     if (isPieceAt(x, y, PAWN)) return 'P';
@@ -146,10 +147,18 @@ bool ChessBoard::movePiece(int x, int y, int newX, int newY) {
     return false;
 }
 
-uint64_t ChessBoard::getValidMoves(int x, int y) {
-    // Returns a bitboard with all valid non-attack moves for the piece at x, y
-    uint64_t validMoves = 0;
+void ChessBoard::undoMove(int x, int y, int newX, int newY, PieceType capturedPiece) {
+    bool color = getPieceColor(newX, newY);
+    auto piece = getPieceTypeAt(newX, newY);
+    setPiece(x, y, piece, color);
+    removePieceAt(newX, newY);
+    if (capturedPiece != EMPTY) {
+        setPiece(newX, newY, capturedPiece, !color);
+    }
+}
 
+uint64_t ChessBoard::getValidMoves(int x, int y) {
+    uint64_t validMoves = 0;
     int64_t emptySquares = ~getBoard();
 
     // loop over all empty squares and check if the piece can move there
@@ -169,11 +178,8 @@ uint64_t ChessBoard::getValidMoves(int x, int y) {
 }
 
 uint64_t ChessBoard::getValidAttacks(int x, int y) {
-    // Returns a bitboard with all valid attacks for the piece at x, y
     uint64_t validAttacks = 0;
-
-    auto color = getPieceColor(x, y);
-
+    bool color = getPieceColor(x, y);
     int64_t enemyPieces = getBoard(!color);
 
     // loop over all enemy pieces and check if the piece can attack them
@@ -203,7 +209,7 @@ bool ChessBoard::isValidMove(int x, int y, int newX, int newY) const {
         }
 
         bool isWhite = isPieceAt(x, y, true);
-         // Direction of movement for white and black pieces
+        // Direction of movement for white and black pieces
         int direction = isWhite ? -1 : 1; 
 
         switch (piece) {
@@ -291,7 +297,8 @@ bool ChessBoard::isValidAttack(int x, int y, int newX, int newY) const {
         }
 
         bool isWhite = isPieceAt(x, y, true);
-        int direction = isWhite ? -1 : 1;  // Direction of movement for white and black pieces
+        // Direction of movement for white and black pieces
+        int direction = isWhite ? -1 : 1;  
 
         switch (piece) {
             case PAWN:

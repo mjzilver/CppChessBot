@@ -17,9 +17,12 @@ public:
     ChessBoard(ChessBoard* other) {
         whitePieces = other->whitePieces;
         blackPieces = other->blackPieces;
-        for (int i = 0; i < 6; ++i) {
-            pieces[i] = other->pieces[i];
-        }
+        pieces[PAWN] = other->pieces[PAWN];
+        pieces[ROOK] = other->pieces[ROOK];
+        pieces[KNIGHT] = other->pieces[KNIGHT];
+        pieces[BISHOP] = other->pieces[BISHOP];
+        pieces[QUEEN] = other->pieces[QUEEN];
+        pieces[KING] = other->pieces[KING];
     }
     // board functions
     void resetBoard();
@@ -28,7 +31,7 @@ public:
     uint64_t getBoard(bool isWhite) const {return isWhite ? whitePieces : blackPieces; };
 
     // piece functions
-    uint64_t getPieceLocation(int x, int y) const;
+    uint64_t getPieceLocation(int x, int y) const { return 1ULL << (x + y * 8); }
     char getPieceSymbol(int x, int y) const;
     void setPiece(int x, int y, PieceType pieceType, bool isWhite);
     void removePiece(int x, int y, PieceType pieceType, bool isWhite);
@@ -39,6 +42,7 @@ public:
     bool removePieceAt(int x, int y);
     PieceType getPieceTypeAt(int x, int y) const;
     bool movePiece(int x, int y, int newX, int newY);
+    void undoMove(int x, int y, int newX, int newY, PieceType capturedPiece);
     uint64_t getValidMoves(int x, int y);
     uint64_t getValidAttacks(int x, int y);
     bool isValidMove(int x, int y, int newX, int newY) const;

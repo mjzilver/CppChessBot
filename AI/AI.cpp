@@ -30,20 +30,21 @@ Move AI::findBestMove(ChessBoard* board, bool isWhite) {
 
     auto moves = generateMoves(board, isWhite);
 
-    std::vector<std::future<float>> futures;
-    std::vector<ChessBoard*> boardsToDelete;
-
-    // score must be messed up somewhere
-    // I think it's because the score is being calculated for the wrong player 
-    // or the score doesnt take into account the moves that could be made after the current move
-
-    for (const auto& move : moves) {
+    auto evaluateMove = [&](const Move& move) {
         ChessBoard* newBoard = new ChessBoard(*board);
         newBoard->movePiece(move.fromX, move.fromY, move.toX, move.toY);
-        boardsToDelete.push_back(newBoard);
 
-        futures.push_back(
-            std::async(std::launch::async, &AI::minimax, this, newBoard, maxDepth, -10000, 10000, false, !isWhite));
+        float score = minimax(newBoard, maxDepth, -10000, 10000, isWhite, !isWhite);
+
+        delete newBoard; 
+
+        return score;
+    };
+
+    std::vector<std::future<float>> futures;
+
+    for (const auto& move : moves) {
+        futures.push_back(std::async(std::launch::async, evaluateMove, move));
     }
 
     for (size_t i = 0; i < moves.size(); ++i) {
@@ -55,22 +56,16 @@ Move AI::findBestMove(ChessBoard* board, bool isWhite) {
         }
     }
 
-    for (auto board : boardsToDelete) {
-        delete board;
-    }
-
     std::cout << "Best score: " << bestScore << std::endl;
 
     return bestMove;
 }
 
+
 std::vector<Move> AI::generateMoves(ChessBoard* board, bool isWhite) {
     auto availableMoves = std::vector<Move>();
-
-    // Get all pieces for the current player and generate moves for each piece
     uint64_t boardPieces = board->getBoard(isWhite);
 
-    // Loop through all pieces in the bitboard
     while (boardPieces) {
         int index = __builtin_ctzll(boardPieces);
         int x = index % 8;
@@ -81,7 +76,6 @@ std::vector<Move> AI::generateMoves(ChessBoard* board, bool isWhite) {
         auto attacks = board->getValidAttacks(x, y);
         auto moves = board->getValidMoves(x, y);
 
-        // Loop through all attacks in the bitboard
         while (attacks) {
             int attackIndex = __builtin_ctzll(attacks);
             int newX = attackIndex % 8;
@@ -94,7 +88,6 @@ std::vector<Move> AI::generateMoves(ChessBoard* board, bool isWhite) {
             attacks &= attacks - 1;
         }
 
-        // Loop through all moves in the bitboard
         while (moves) {
             int moveIndex = __builtin_ctzll(moves);
             int newX = moveIndex % 8;
@@ -122,10 +115,12 @@ float AI::minimax(ChessBoard* board, int depth, float alpha, float beta, bool ma
     auto moves = generateMoves(board, isWhite);
 
     for (const auto& move : moves) {
-        ChessBoard* newBoard = new ChessBoard(*board);
-        newBoard->movePiece(move.fromX, move.fromY, move.toX, move.toY);
+        auto piece = board->getPieceTypeAt(move.toX, move.toY);
+        board->movePiece(move.fromX, move.fromY, move.toX, move.toY);
 
-        float score = minimax(newBoard, depth - 1, alpha, beta, !maximizingPlayer, !isWhite);
+        float score = minimax(board, depth - 1, alpha, beta, !maximizingPlayer, !isWhite);
+
+        board->undoMove(move.fromX, move.fromY, move.toX, move.toY, piece);
 
         if (maximizingPlayer) {
             bestScore = std::max(bestScore, score);
@@ -134,8 +129,6 @@ float AI::minimax(ChessBoard* board, int depth, float alpha, float beta, bool ma
             bestScore = std::min(bestScore, score);
             beta = std::min(beta, bestScore);
         }
-
-        delete newBoard;
 
         if (beta <= alpha) {
             break;  // Prune the search tree
@@ -152,7 +145,6 @@ float AI::evaluatePosition(ChessBoard* board) {
     auto whitePieces = board->getBoard(true);
     auto blackPieces = board->getBoard(false);
 
-    // Loop through all pieces in the bitboard
     while (whitePieces) {
         int index = __builtin_ctzll(whitePieces);
         int x = index % 8;
@@ -166,7 +158,6 @@ float AI::evaluatePosition(ChessBoard* board) {
         whitePieces &= whitePieces - 1;
     }
 
-    // Loop through all pieces in the bitboard
     while (blackPieces) {
         int index = __builtin_ctzll(blackPieces);
         int x = index % 8;
@@ -184,19 +175,20 @@ float AI::evaluatePosition(ChessBoard* board) {
 }
 
 int AI::piecePositionScore(int x, int y, PieceType type, bool isWhite) {
+    int i = isWhite ? 0 : 1;
     switch (type) {
         case PAWN:
-            return PAWN_TABLE[isWhite ? 0 : 1][y * 8 + x];
+            return PAWN_TABLE[i][y * 8 + x];
         case KNIGHT:
-            return KNIGHT_TABLE[isWhite ? 0 : 1][y * 8 + x];
+            return KNIGHT_TABLE[i][y * 8 + x];
         case BISHOP:
-            return BISHOP_TABLE[isWhite ? 0 : 1][y * 8 + x];
+            return BISHOP_TABLE[i][y * 8 + x];
         case ROOK:
-            return ROOK_TABLE[isWhite ? 0 : 1][y * 8 + x];
+            return ROOK_TABLE[i][y * 8 + x];
         case QUEEN:
-            return QUEEN_TABLE[isWhite ? 0 : 1][y * 8 + x];
+            return QUEEN_TABLE[i][y * 8 + x];
         case KING:
-            return KING_TABLE[isWhite ? 0 : 1][y * 8 + x];
+            return KING_TABLE[i][y * 8 + x];
         default:
             return 0;
     }
@@ -205,17 +197,17 @@ int AI::piecePositionScore(int x, int y, PieceType type, bool isWhite) {
 float AI::getValueForPiece(PieceType piece) {
     switch (piece) {
         case PAWN:
-            return 25.0f;
+            return 30.0f;
         case KNIGHT:
-            return 50.0f;
+            return 70.0f;
         case BISHOP:
-            return 50.0f;
+            return 70.0f;
         case ROOK:
-            return 80.0f;
-        case QUEEN:
             return 10.0f;
+        case QUEEN:
+            return 200.0f;
         case KING:
-            return 300.0f;
+            return 1000.0f;
         default:
             return 0.0f;
     }
