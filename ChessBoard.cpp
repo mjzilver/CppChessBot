@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <cstdint>
+#include <random>
 
 // board functions
 void ChessBoard::resetBoard() {
@@ -314,4 +315,39 @@ bool ChessBoard::isValidAttack(int x, int y, int newX, int newY) const {
         }
     }
     return false;
+}
+
+void ChessBoard::initializeZobristTable() {
+    std::mt19937_64 rng(123456);  // Fixed seed for reproducibility
+    std::uniform_int_distribution<uint64_t> dist(0, std::numeric_limits<uint64_t>::max());
+
+    for (int piece = 0; piece < 12; ++piece) {
+        for (int square = 0; square < 64; ++square) {
+            zobristTable[piece][square] = dist(rng);
+        }
+    }
+
+    zobristSideToMove = dist(rng); 
+}
+
+uint64_t ChessBoard::getBoardHash(bool isWhiteMove) const {
+    uint64_t hash = 0;
+
+    for (int y = 0; y < 8; ++y) {
+        for (int x = 0; x < 8; ++x) {
+            PieceType piece = getPieceTypeAt(x, y); 
+            if (piece != EMPTY) {
+                int pieceIndex = getPieceColor(x, y) == WHITE ? piece : piece + 6;  
+                int squareIndex = y * 8 + x;  
+                hash ^= zobristTable[pieceIndex][squareIndex];  
+            }
+        }
+    }
+
+    // XOR the side to move (flip if black's turn)
+    if (!isWhiteMove) {
+        hash ^= zobristSideToMove;
+    }
+
+    return hash;
 }

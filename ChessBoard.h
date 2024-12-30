@@ -12,8 +12,17 @@ private:
     uint64_t blackPieces = 0;
     uint64_t pieces[6] = {0, 0, 0, 0, 0, 0};
 
+    const bool WHITE = true;
+    const bool BLACK = false;
+
+    uint64_t zobristTable[12][64];
+    uint64_t zobristSideToMove; 
 public:
-    ChessBoard() { }
+    ChessBoard() {
+        resetBoard();
+        initializeZobristTable();
+    }
+
     ChessBoard(ChessBoard* other) {
         whitePieces = other->whitePieces;
         blackPieces = other->blackPieces;
@@ -24,11 +33,16 @@ public:
         pieces[QUEEN] = other->pieces[QUEEN];
         pieces[KING] = other->pieces[KING];
     }
+    
     // board functions
     void resetBoard();
     void emptyBoard();
     uint64_t getBoard() const {return whitePieces | blackPieces; };
     uint64_t getBoard(bool isWhite) const {return isWhite ? whitePieces : blackPieces; };
+
+    // Zobrist hashing
+    uint64_t getBoardHash(bool isWhiteMove) const;
+    void initializeZobristTable();
 
     // piece functions
     uint64_t getPieceLocation(int x, int y) const { return 1ULL << (x + y * 8); }

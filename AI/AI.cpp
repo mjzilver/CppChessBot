@@ -68,7 +68,7 @@ Move AI::findBestMove(ChessBoard* board, bool isWhite) {
 }
 
 std::vector<Move> AI::generateMoves(ChessBoard* board, bool isWhite) {
-    uint64_t boardHash = board->getBoard();
+    uint64_t boardHash = board->getBoardHash(isWhite);
 
     {
         std::lock_guard<std::mutex> lock(moveCacheMutex);
