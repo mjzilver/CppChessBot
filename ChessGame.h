@@ -13,5 +13,5 @@ public:
     ChessGame();
     ~ChessGame();
 
-    void startGame(bool with_gui);
+    void startGame(const bool with_gui);
 };

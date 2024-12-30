@@ -13,7 +13,7 @@
 #include "../ChessBoard.h"
 #include "PieceSqTable.h"
 
-void AI::makeMove(ChessBoard* board, bool isWhite) {
+void AI::makeMove(ChessBoard* board, const bool isWhite) {
     auto start_time = std::chrono::high_resolution_clock::now();
     Move bestMove = findBestMove(board, isWhite);
 
@@ -27,7 +27,7 @@ void AI::makeMove(ChessBoard* board, bool isWhite) {
 
 uint64_t cacheHitCount = 0;
 
-Move AI::findBestMove(ChessBoard* board, bool isWhite) {
+Move AI::findBestMove(const ChessBoard* const board, const bool isWhite) {
     float bestScore = -10000;
     Move bestMove;
 
@@ -67,7 +67,7 @@ Move AI::findBestMove(ChessBoard* board, bool isWhite) {
     return bestMove;
 }
 
-std::vector<Move> AI::generateMoves(ChessBoard* board, bool isWhite) {
+std::vector<Move> AI::generateMoves(const ChessBoard* const board, const bool isWhite) {
     uint64_t boardHash = board->getBoardHash(isWhite);
 
     {
@@ -124,7 +124,7 @@ std::vector<Move> AI::generateMoves(ChessBoard* board, bool isWhite) {
     return availableMoves;
 }
 
-float AI::minimax(ChessBoard* board, int depth, float alpha, float beta, bool maximizingPlayer, bool isWhite) {
+float AI::minimax(ChessBoard* const board, const int depth, float alpha, float beta, const bool maximizingPlayer, const bool isWhite) {
     if (depth == 0) {
         return evaluatePosition(board);
     }
@@ -156,7 +156,7 @@ float AI::minimax(ChessBoard* board, int depth, float alpha, float beta, bool ma
     return bestScore;
 }
 
-float AI::evaluatePosition(ChessBoard* board) {
+float AI::evaluatePosition(const ChessBoard* const board) const {
     float whiteScore = 0.0f;
     float blackScore = 0.0f;
 
@@ -192,7 +192,7 @@ float AI::evaluatePosition(ChessBoard* board) {
     return blackScore - whiteScore;
 }
 
-int AI::piecePositionScore(int x, int y, PieceType type, bool isWhite) {
+int AI::piecePositionScore(const int x, const int y, const PieceType type, const bool isWhite) const {
     int i = isWhite ? 0 : 1;
     switch (type) {
         case PAWN:
@@ -212,7 +212,7 @@ int AI::piecePositionScore(int x, int y, PieceType type, bool isWhite) {
     }
 }
 
-float AI::getValueForPiece(PieceType piece) {
+float AI::getValueForPiece(const PieceType piece) const {
     switch (piece) {
         case PAWN:
             return 30.0f;

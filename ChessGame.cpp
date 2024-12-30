@@ -15,7 +15,7 @@ ChessGame::~ChessGame() {
     if (gDisplay != nullptr) delete gDisplay;
 }
 
-void ChessGame::startGame(bool with_gui) {
+void ChessGame::startGame(const bool with_gui) {
     IDisplay* display;
 
     if (with_gui) {

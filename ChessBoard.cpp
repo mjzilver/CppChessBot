@@ -54,7 +54,7 @@ void ChessBoard::emptyBoard() {
     pieces[KING] = 0;
 }
 
-char ChessBoard::getPieceSymbol(int x, int y) const {
+char ChessBoard::getPieceSymbol(const int x, const int y) const {
     if (isPieceAt(x, y, PAWN)) return 'P';
     if (isPieceAt(x, y, ROOK)) return 'R';
     if (isPieceAt(x, y, KNIGHT)) return 'N';
@@ -65,7 +65,7 @@ char ChessBoard::getPieceSymbol(int x, int y) const {
 }
 
 // piece functions
-void ChessBoard::setPiece(int x, int y, PieceType pieceType, bool isWhite) {
+void ChessBoard::setPiece(const int x, const int y, const PieceType pieceType, const bool isWhite) {
     uint64_t piece = 1ULL << (x + y * 8);
     if (isWhite) {
         whitePieces |= piece;
@@ -75,7 +75,7 @@ void ChessBoard::setPiece(int x, int y, PieceType pieceType, bool isWhite) {
     pieces[pieceType] |= piece;
 }
 
-void ChessBoard::removePiece(int x, int y, PieceType pieceType, bool isWhite) {
+void ChessBoard::removePiece(const int x, const int y, const PieceType pieceType, const bool isWhite) {
     uint64_t piece = 1ULL << (x + y * 8);
     if (isWhite) {
         whitePieces &= ~piece;
@@ -85,27 +85,27 @@ void ChessBoard::removePiece(int x, int y, PieceType pieceType, bool isWhite) {
     pieces[pieceType] &= ~piece;
 }
 
-bool ChessBoard::isPieceAt(int x, int y) const {
+bool ChessBoard::isPieceAt(const int x, const int y) const {
     uint64_t piece = 1ULL << (x + y * 8);
     return (whitePieces & piece) || (blackPieces & piece);
 }
 
-bool ChessBoard::isPieceAt(int x, int y, bool isWhite) const {
+bool ChessBoard::isPieceAt(const int x, const int y, const bool isWhite) const {
     uint64_t piece = 1ULL << (x + y * 8);
     return isWhite ? (whitePieces & piece) : (blackPieces & piece);
 }
 
-bool ChessBoard::isPieceAt(int x, int y, PieceType pieceType) const {
+bool ChessBoard::isPieceAt(const int x, const int y, const PieceType pieceType) const {
     uint64_t piece = 1ULL << (x + y * 8);
     return pieces[pieceType] & piece;
 }
 
-bool ChessBoard::getPieceColor(int x, int y) const {
+bool ChessBoard::getPieceColor(const int x, const int y) const {
     uint64_t piece = 1ULL << (x + y * 8);
     return whitePieces & piece;
 }
 
-bool ChessBoard::removePieceAt(int x, int y) {
+bool ChessBoard::removePieceAt(const int x, const int y) {
     if (isPieceAt(x, y)) {
         uint64_t piece = 1ULL << (x + y * 8);
         whitePieces &= ~piece;
@@ -118,7 +118,7 @@ bool ChessBoard::removePieceAt(int x, int y) {
     return false;
 }
 
-PieceType ChessBoard::getPieceTypeAt(int x, int y) const {
+PieceType ChessBoard::getPieceTypeAt(const int x, const int y) const {
     if (isPieceAt(x, y, PAWN)) return PAWN;
     if (isPieceAt(x, y, ROOK)) return ROOK;
     if (isPieceAt(x, y, KNIGHT)) return KNIGHT;
@@ -128,7 +128,7 @@ PieceType ChessBoard::getPieceTypeAt(int x, int y) const {
     return EMPTY;
 }
 
-bool ChessBoard::movePiece(int x, int y, int newX, int newY) {
+bool ChessBoard::movePiece(const int x, const int y, const int newX, const int newY) {
     if (isPieceAt(x, y)) {
         if (isValidAttack(x, y, newX, newY) && isPieceAt(newX, newY, !getPieceColor(x, y))) {
             auto piece = getPieceTypeAt(x, y);
@@ -148,7 +148,7 @@ bool ChessBoard::movePiece(int x, int y, int newX, int newY) {
     return false;
 }
 
-void ChessBoard::undoMove(int x, int y, int newX, int newY, PieceType capturedPiece) {
+void ChessBoard::undoMove(const int x, const int y, const int newX, const int newY, const PieceType capturedPiece) {
     bool color = getPieceColor(newX, newY);
     auto piece = getPieceTypeAt(newX, newY);
     setPiece(x, y, piece, color);
@@ -158,7 +158,7 @@ void ChessBoard::undoMove(int x, int y, int newX, int newY, PieceType capturedPi
     }
 }
 
-uint64_t ChessBoard::getValidMoves(int x, int y) {
+uint64_t ChessBoard::getValidMoves(const int x, const int y) const {
     uint64_t validMoves = 0;
     int64_t emptySquares = ~getBoard();
 
@@ -178,7 +178,7 @@ uint64_t ChessBoard::getValidMoves(int x, int y) {
     return validMoves;
 }
 
-uint64_t ChessBoard::getValidAttacks(int x, int y) {
+uint64_t ChessBoard::getValidAttacks(const int x, const int y) const {
     uint64_t validAttacks = 0;
     bool color = getPieceColor(x, y);
     int64_t enemyPieces = getBoard(!color);
@@ -199,7 +199,7 @@ uint64_t ChessBoard::getValidAttacks(int x, int y) {
     return validAttacks;
 }
 
-bool ChessBoard::isValidMove(int x, int y, int newX, int newY) const {
+bool ChessBoard::isValidMove(const int x, const int y, const int newX, const int newY) const {
     if (isPieceAt(x, y)) {
         auto piece = getPieceTypeAt(x, y);
         auto pieceColor = getPieceColor(x, y);
@@ -271,7 +271,7 @@ bool ChessBoard::isValidMove(int x, int y, int newX, int newY) const {
     return false;
 }
 
-bool ChessBoard::isPathClear(int startX, int startY, int endX, int endY) const {
+bool ChessBoard::isPathClear(const int startX, const int startY, const int endX, const int endY) const {
     // Check if the path from start to end is clear (no pieces in the way)
     int deltaX = (endX > startX) ? 1 : ((endX < startX) ? -1 : 0);
     int deltaY = (endY > startY) ? 1 : ((endY < startY) ? -1 : 0);
@@ -290,7 +290,7 @@ bool ChessBoard::isPathClear(int startX, int startY, int endX, int endY) const {
     return true;  // The path is clear
 }
 
-bool ChessBoard::isValidAttack(int x, int y, int newX, int newY) const {
+bool ChessBoard::isValidAttack(const int x, const int y, const int newX, const int newY) const {
     if (isPieceAt(x, y)) {
         auto piece = getPieceTypeAt(x, y);
         // Can't attack pieces of the same color
@@ -327,19 +327,19 @@ void ChessBoard::initializeZobristTable() {
         }
     }
 
-    zobristSideToMove = dist(rng); 
+    zobristSideToMove = dist(rng);
 }
 
-uint64_t ChessBoard::getBoardHash(bool isWhiteMove) const {
+uint64_t ChessBoard::getBoardHash(const bool isWhiteMove) const {
     uint64_t hash = 0;
 
     for (int y = 0; y < 8; ++y) {
         for (int x = 0; x < 8; ++x) {
-            PieceType piece = getPieceTypeAt(x, y); 
+            PieceType piece = getPieceTypeAt(x, y);
             if (piece != EMPTY) {
-                int pieceIndex = getPieceColor(x, y) == WHITE ? piece : piece + 6;  
-                int squareIndex = y * 8 + x;  
-                hash ^= zobristTable[pieceIndex][squareIndex];  
+                int pieceIndex = getPieceColor(x, y) == WHITE ? piece : piece + 6;
+                int squareIndex = y * 8 + x;
+                hash ^= zobristTable[pieceIndex][squareIndex];
             }
         }
     }

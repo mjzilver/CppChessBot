@@ -17,10 +17,10 @@ class AI {
 public:
     AI(int maxDepth) : maxDepth(maxDepth) {}
 
-    void makeMove(ChessBoard* board, bool isWhite);
+    void makeMove(ChessBoard* board, const bool isWhite);
 
 private:
-    int maxDepth;
+    const int maxDepth;
     const int timeLimit = 5000; // 5 seconds TODO implement time limit
 
     // move cache
@@ -28,12 +28,12 @@ private:
     std::mutex moveCacheMutex; 
 
     // evals
-    Move findBestMove(ChessBoard* board, bool isWhite);
-    float evaluatePosition(ChessBoard* board);
-    int piecePositionScore(int x, int y, PieceType type, bool isWhite);
-    float getValueForPiece(PieceType piece);
-    float minimax(ChessBoard* board, int depth, float alpha, float beta, bool maximizingPlayer, bool isWhite);
+    Move findBestMove(const ChessBoard* const board, const bool isWhite);
+    float evaluatePosition(const ChessBoard* const board) const;
+    int piecePositionScore(const int x, const int y, const PieceType type, const bool isWhite) const;
+    float getValueForPiece(const PieceType piece) const;
+    float minimax(ChessBoard* const board, const int depth, float alpha, float beta, const bool maximizingPlayer, const bool isWhite);
 
     // move generation
-    std::vector<Move> generateMoves(ChessBoard* board, bool isWhite);
+    std::vector<Move> generateMoves(const ChessBoard* const board, const bool isWhite);
 };
