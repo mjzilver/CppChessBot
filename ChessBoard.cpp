@@ -9,8 +9,8 @@ void ChessBoard::resetBoard() {
 
     // set pawns
     for (int i = 0; i < 8; ++i) {
-        setPiece(i, 1, PAWN, false);  
-        setPiece(i, 6, PAWN, true);   
+        setPiece(i, 1, PAWN, false);
+        setPiece(i, 6, PAWN, true);
     }
 
     // set rooks
@@ -142,7 +142,7 @@ bool ChessBoard::movePiece(int x, int y, int newX, int newY) {
             removePieceAt(x, y);
 
             return true;
-        } 
+        }
     }
     return false;
 }
@@ -198,7 +198,6 @@ uint64_t ChessBoard::getValidAttacks(int x, int y) {
     return validAttacks;
 }
 
-
 bool ChessBoard::isValidMove(int x, int y, int newX, int newY) const {
     if (isPieceAt(x, y)) {
         auto piece = getPieceTypeAt(x, y);
@@ -210,7 +209,7 @@ bool ChessBoard::isValidMove(int x, int y, int newX, int newY) const {
 
         bool isWhite = isPieceAt(x, y, true);
         // Direction of movement for white and black pieces
-        int direction = isWhite ? -1 : 1; 
+        int direction = isWhite ? -1 : 1;
 
         switch (piece) {
             case PAWN:
@@ -264,6 +263,8 @@ bool ChessBoard::isValidMove(int x, int y, int newX, int newY) const {
                     return true;
                 }
                 break;
+            case EMPTY:
+                return false;
         }
     }
     return false;
@@ -298,7 +299,7 @@ bool ChessBoard::isValidAttack(int x, int y, int newX, int newY) const {
 
         bool isWhite = isPieceAt(x, y, true);
         // Direction of movement for white and black pieces
-        int direction = isWhite ? -1 : 1;  
+        int direction = isWhite ? -1 : 1;
 
         switch (piece) {
             case PAWN:

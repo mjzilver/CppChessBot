@@ -1,21 +1,28 @@
 cmake_minimum_required(VERSION 3.12)
 project(CppChess)
 
+# Set C++ standard
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
-
-# if windows
-if(WIN32)
-    # Set the C compiler
-    set(CMAKE_C_COMPILER "C:/mingw64/bin/gcc.exe")
-    # Set the C++ compiler
-    set(CMAKE_CXX_COMPILER "C:/mingw64/bin/g++.exe")
-    # build for mingw 
-    set(CMAKE_GENERATOR "MinGW Makefiles")
+# Set default build type to Debug
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type" FORCE)
 endif()
 
-# Add the source files
+# Define build-specific flags
+set(CMAKE_CXX_FLAGS_DEBUG "-g -Wall" CACHE STRING "Flags for debug builds")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Wall" CACHE STRING "Flags for release builds")
+set(CMAKE_CXX_FLAGS_PROFILE "-O3 -pg -Wall" CACHE STRING "Flags for profiling builds")
+
+# Windows-specific settings
+if(WIN32)
+    set(CMAKE_C_COMPILER "C:/mingw64/bin/gcc.exe")
+    set(CMAKE_CXX_COMPILER "C:/mingw64/bin/g++.exe")
+    set(SFML_DIR "C:/Program Files/SFML-2.6.1/lib/cmake/SFML")
+endif()
+
+# Source files
 set(SOURCE_FILES
     main.cpp
     ChessBoard.h
@@ -33,12 +40,8 @@ set(SOURCE_FILES
 # Create the executable
 add_executable(CppChess ${SOURCE_FILES})
 
-# if win
-if(WIN32)
-    # set the path to the SFML libraries
-    set(SFML_DIR "C:/Program Files/SFML-2.6.1/lib/cmake/SFML")
-endif()
-find_package(SFML COMPONENTS graphics REQUIRED)
+# Find SFML
+find_package(SFML COMPONENTS graphics window system REQUIRED)
 
-# link SFML to main executable
+# Link SFML to the executable
 target_link_libraries(CppChess sfml-graphics sfml-window sfml-system)

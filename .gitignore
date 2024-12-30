@@ -1,3 +1,21 @@
+# build folder
 /build
+/out
+
+# Vscode
 .vscode
+
+# MacOS
 .DS_Store
+
+# Visual Studio
+.vs
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.sln
+
+# CMake
+CMakeFiles
+CMakeCache.txt
+cmake_install.cmake

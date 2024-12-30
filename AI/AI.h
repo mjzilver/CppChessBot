@@ -4,6 +4,8 @@
 #include "../PieceType.h"
 
 #include <vector>
+#include <unordered_map>
+#include <mutex>
 
 struct Move {
     int fromX, fromY;
@@ -19,6 +21,11 @@ public:
 
 private:
     int maxDepth;
+    const int timeLimit = 5000; // 5 seconds TODO implement time limit
+
+    // move cache
+    std::unordered_map<uint64_t, std::vector<Move>> moveCache;
+    std::mutex moveCacheMutex; 
 
     // evals
     Move findBestMove(ChessBoard* board, bool isWhite);

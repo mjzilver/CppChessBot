@@ -1,13 +1,14 @@
 #include "AI.h"
 
 #include <chrono>
+#include <cstdlib>
 #include <future>
 #include <iostream>
 #include <limits>
-#include <thread>
-#include <vector>
-#include <cstdlib>
 #include <random>
+#include <thread>
+#include <unordered_map>
+#include <vector>
 
 #include "../ChessBoard.h"
 #include "PieceSqTable.h"
@@ -24,11 +25,17 @@ void AI::makeMove(ChessBoard* board, bool isWhite) {
     std::cout << "Time to find best move " << duration.count() << " milliseconds\n";
 }
 
+uint64_t cacheHitCount = 0;
+
 Move AI::findBestMove(ChessBoard* board, bool isWhite) {
     float bestScore = -10000;
     Move bestMove;
 
     auto moves = generateMoves(board, isWhite);
+
+    std::cout << "Number of moves: " << moves.size() << std::endl;
+    std::cout << "Cache hit count: " << cacheHitCount << std::endl;
+    cacheHitCount = 0;
 
     auto evaluateMove = [&](const Move& move) {
         ChessBoard* newBoard = new ChessBoard(*board);
@@ -36,8 +43,7 @@ Move AI::findBestMove(ChessBoard* board, bool isWhite) {
 
         float score = minimax(newBoard, maxDepth, -10000, 10000, isWhite, !isWhite);
 
-        delete newBoard; 
-
+        delete newBoard;
         return score;
     };
 
@@ -61,8 +67,18 @@ Move AI::findBestMove(ChessBoard* board, bool isWhite) {
     return bestMove;
 }
 
-
 std::vector<Move> AI::generateMoves(ChessBoard* board, bool isWhite) {
+    uint64_t boardHash = board->getBoard();
+
+    {
+        std::lock_guard<std::mutex> lock(moveCacheMutex);
+        auto it = moveCache.find(boardHash);
+        if (it != moveCache.end()) {
+            cacheHitCount++;
+            return it->second;
+        }
+    }
+
     auto availableMoves = std::vector<Move>();
     uint64_t boardPieces = board->getBoard(isWhite);
 
@@ -70,8 +86,6 @@ std::vector<Move> AI::generateMoves(ChessBoard* board, bool isWhite) {
         int index = __builtin_ctzll(boardPieces);
         int x = index % 8;
         int y = index / 8;
-
-        auto piece = board->getPieceTypeAt(x, y);
 
         auto attacks = board->getValidAttacks(x, y);
         auto moves = board->getValidMoves(x, y);
@@ -103,6 +117,10 @@ std::vector<Move> AI::generateMoves(ChessBoard* board, bool isWhite) {
         boardPieces &= boardPieces - 1;
     }
 
+    {
+        std::lock_guard<std::mutex> lock(moveCacheMutex);
+        moveCache[boardHash] = availableMoves;
+    }
     return availableMoves;
 }
 
