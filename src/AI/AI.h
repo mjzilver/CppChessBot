@@ -17,15 +17,21 @@ class AI {
 public:
     AI(int maxDepth) : maxDepth(maxDepth) {}
 
+    AI(const AI&) = delete;
+    AI& operator=(const AI&) = delete;
+
     void makeMove(ChessBoard* board, const bool isWhite);
 
 private:
     const int maxDepth;
-    const int timeLimit = 5000; // 5 seconds TODO implement time limit
+    const int timeLimit = 2000; 
+    uint64_t cacheHitCount = 0;
 
     // move cache
     std::unordered_map<uint64_t, std::vector<Move>> moveCache;
     std::mutex moveCacheMutex; 
+
+    std::chrono::steady_clock::time_point start_time;
 
     // evals
     Move findBestMove(const ChessBoard* const board, const bool isWhite);

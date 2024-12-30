@@ -6,7 +6,7 @@
 
 #include "../AI/AI.h"
 
-GDisplay::GDisplay() : window(sf::VideoMode(500u, 500u), "Chess Game"), squareSize(60), margin(25) {
+GDisplay::GDisplay(AI *ai) : window(sf::VideoMode(500u, 500u), "Chess Game"), squareSize(60), margin(25) {
     loadPieceTextures(pieceTextures);
     if (!font.loadFromFile("../resources/OpenSans-Regular.ttf")) {
         std::cerr << "Error loading font" << std::endl;
@@ -19,6 +19,8 @@ GDisplay::GDisplay() : window(sf::VideoMode(500u, 500u), "Chess Game"), squareSi
     window.setActive(true);
     window.clear();
     window.display();
+
+    this->ai = ai;
 }
 
 GDisplay::~GDisplay() { pieceTextures.clear(); }
@@ -27,12 +29,16 @@ void GDisplay::drawLoop(ChessBoard &board) {
     while (window.isOpen()) {
         handleInput(board);
 
-        drawBoard(board);
-        
-        if (!isCurrentPlayerWhite) {
-            AI ai(5);
-            ai.makeMove(&board, false);
-            isCurrentPlayerWhite = true;
+        static bool isAIThreadRunning = false;
+        if (!isCurrentPlayerWhite && !isAIThreadRunning) {
+            isAIThreadRunning = true;
+            std::thread aiThread([&]() {
+                ai->makeMove(&board, false);
+                isCurrentPlayerWhite = true;
+                isAIThreadRunning = false;
+            });
+
+            aiThread.detach();
         }
 
         drawBoard(board);
@@ -115,6 +121,7 @@ void GDisplay::loadPieceTextures(std::map<char, sf::Texture> &pieceTextures) con
     const std::string imagePath = "../images/";
 
     // Define the pieces and their corresponding filenames
+    // Capital letters are white pieces, lowercase letters are black pieces
     std::map<char, std::string> pieceFilenames = {{'P', "WP.png"}, {'N', "WN.png"}, {'B', "WB.png"}, {'R', "WR.png"},
                                                   {'Q', "WQ.png"}, {'K', "WK.png"}, {'p', "BP.png"}, {'n', "BN.png"},
                                                   {'b', "BB.png"}, {'r', "BR.png"}, {'q', "BQ.png"}, {'k', "BK.png"}};
@@ -189,16 +196,16 @@ void GDisplay::handleMouseClick(sf::Event::MouseButtonEvent &mouse, ChessBoard &
 }
 
 void GDisplay::handleValidChessboardClick(int colIndex, int rowIndex, ChessBoard &board) {
-    SelectionPiece clickedPiece = {colIndex, rowIndex, board.getPieceSymbol(colIndex, rowIndex), board.isPieceAt(colIndex, rowIndex, true)};
+    SelectionPiece clickedPiece = {colIndex, rowIndex, board.getPieceSymbol(colIndex, rowIndex),
+                                   board.isPieceAt(colIndex, rowIndex, true)};
 
-    if (selectedPiece.symbol != ' ') {
+    if (selectedPiece.symbol != ' ' && isCurrentPlayerWhite && selectedPiece.isWhite) {
         if (board.movePiece(selectedPiece.x, selectedPiece.y, colIndex, rowIndex)) {
             selectedPiece.symbol = ' ';
             isCurrentPlayerWhite = !isCurrentPlayerWhite;
-        } else {
-            selectedPiece = clickedPiece;
+            return;
         }
-    } else {
-        selectedPiece = clickedPiece;
     }
+
+    selectedPiece = clickedPiece;
 }

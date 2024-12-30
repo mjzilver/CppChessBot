@@ -6,9 +6,11 @@
 #include "../ChessBoard.h"
 #include "IDisplay.h"
 
+#include "../AI/AI.h"
+
 class GDisplay : public IDisplay {
 public:
-    GDisplay();
+    GDisplay(AI *ai);
     ~GDisplay();
 
     void drawBoard(const ChessBoard &board) override;
@@ -35,11 +37,14 @@ private:
     SelectionPiece selectedPiece = { 0, 0, ' ', true};
     bool isCurrentPlayerWhite = true;
 
+    AI *ai;
+
+    // Load textures
     void loadPieceTextures(std::map<char, sf::Texture> &pieceTextures) const;
 
     // Drawing functions
     void drawSquare(int x, int y, const sf::Color &color);
-    void drawCircleOutline(int x, int y, float borderFraction, const sf::Color &borderColor);
+    void drawCircleOutline(int x, int y, float circleFraction, const sf::Color &borderColor);
     void drawCircle(int x, int y, float circleFraction, const sf::Color &color);
 
     // Event handlers for selecting and moving pieces

@@ -58,7 +58,7 @@ void ConsoleDisplay::drawLoop(ChessBoard &board) {
     std::cout << "Game over!" << std::endl;
 }
 
-bool ConsoleDisplay::makeMove(ChessBoard &board, const std::string &moveInput, bool isWhite) {
+bool ConsoleDisplay::makeMove(ChessBoard &board, const std::string &moveInput) {
     if ((moveInput.size() < 4 || moveInput.size() > 5) || !isalpha(moveInput[0]) || !isdigit(moveInput[1]) ||
         !isalpha(moveInput[2]) || !isdigit(moveInput[3])) {
         std::cout << "Invalid move format. Please use the format 'a2a4'." << std::endl;
@@ -83,7 +83,7 @@ void ConsoleDisplay::handleInput(ChessBoard &board) {
     drawBoard(board);
     std::cout << "Player 1's turn (white): " << std::endl;
     std::string moveInputPlayer1 = receiveInput();
-    while (!makeMove(board, moveInputPlayer1, true)) {
+    while (!makeMove(board, moveInputPlayer1)) {
         moveInputPlayer1 = receiveInput();
         drawBoard(board);
     }
@@ -91,7 +91,7 @@ void ConsoleDisplay::handleInput(ChessBoard &board) {
 
     std::cout << "Player 2's turn (black): " << std::endl;
     std::string moveInputPlayer2 = receiveInput();
-    while (!makeMove(board, moveInputPlayer2, false)) {
+    while (!makeMove(board, moveInputPlayer2)) {
         moveInputPlayer2 = receiveInput();
         drawBoard(board);
     }

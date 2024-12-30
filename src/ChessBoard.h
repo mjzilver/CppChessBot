@@ -22,17 +22,6 @@ public:
         resetBoard();
         initializeZobristTable();
     }
-
-    ChessBoard(const ChessBoard* other) {
-        whitePieces = other->whitePieces;
-        blackPieces = other->blackPieces;
-        pieces[PAWN] = other->pieces[PAWN];
-        pieces[ROOK] = other->pieces[ROOK];
-        pieces[KNIGHT] = other->pieces[KNIGHT];
-        pieces[BISHOP] = other->pieces[BISHOP];
-        pieces[QUEEN] = other->pieces[QUEEN];
-        pieces[KING] = other->pieces[KING];
-    }
     
     // board functions
     void resetBoard();

@@ -14,22 +14,20 @@
 #include "PieceSqTable.h"
 
 void AI::makeMove(ChessBoard* board, const bool isWhite) {
-    auto start_time = std::chrono::high_resolution_clock::now();
+    start_time = std::chrono::steady_clock::now();
     Move bestMove = findBestMove(board, isWhite);
 
     if (!board->movePiece(bestMove.fromX, bestMove.fromY, bestMove.toX, bestMove.toY)) {
         std::cout << "AI move failed, this should not happen" << std::endl;
     }
-    auto end_time = std::chrono::high_resolution_clock::now();
+    auto end_time = std::chrono::steady_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
     std::cout << "Time to find best move " << duration.count() << " milliseconds\n";
 }
 
-uint64_t cacheHitCount = 0;
-
 Move AI::findBestMove(const ChessBoard* const board, const bool isWhite) {
     float bestScore = -10000;
-    Move bestMove;
+    Move bestMove {};
 
     auto moves = generateMoves(board, isWhite);
 
@@ -52,6 +50,8 @@ Move AI::findBestMove(const ChessBoard* const board, const bool isWhite) {
     for (const auto& move : moves) {
         futures.push_back(std::async(std::launch::async, evaluateMove, move));
     }
+
+    std::cout << "Amount of futures: " << futures.size() << std::endl;
 
     for (size_t i = 0; i < moves.size(); ++i) {
         float score = futures[i].get();
@@ -124,10 +124,19 @@ std::vector<Move> AI::generateMoves(const ChessBoard* const board, const bool is
     return availableMoves;
 }
 
-float AI::minimax(ChessBoard* const board, const int depth, float alpha, float beta, const bool maximizingPlayer, const bool isWhite) {
+float AI::minimax(ChessBoard* const board, const int depth, float alpha, float beta, const bool maximizingPlayer,
+                  const bool isWhite) {
     if (depth == 0) {
         return evaluatePosition(board);
     }
+
+    // check if time limit has been reached
+    auto current_time = std::chrono::steady_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - start_time);
+    if (duration.count() > timeLimit) {
+        return evaluatePosition(board);
+    }
+
     float bestScore = maximizingPlayer ? -10000 : 10000;
 
     auto moves = generateMoves(board, isWhite);

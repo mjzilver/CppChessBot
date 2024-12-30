@@ -1,5 +1,4 @@
 #include <string>
-
 #include "ChessGame.h"
 
 int main(int argc, char* argv[]) {
@@ -13,8 +12,10 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    ChessGame game;
-    game.startGame(useGui);
+    {
+        ChessGame game;
+        game.startGame(useGui);
+    }
 
     return 0;
 }

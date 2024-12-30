@@ -7,7 +7,7 @@
 class ChessGame {
 private:
     ChessBoard board;
-    GDisplay* gDisplay;
+    IDisplay* display = nullptr;
 
 public:
     ChessGame();

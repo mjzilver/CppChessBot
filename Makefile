@@ -1,36 +1,76 @@
 TARGET = CppChess
+BUILD_DIR = build
+SRC_DIR = src
+CPP_FILES := $(wildcard $(SRC_DIR)/*.cpp) $(wildcard $(SRC_DIR)/**/*.cpp)
 
-.PHONY: build run all clean valgrind callgrind callgrind-view build-debug run-debug debug
-
-build:
-	mkdir -p build
-	cd build && cmake .. && make
-
-run:
-	cd build &&	./$(TARGET)
-
+# Default target
+.PHONY: all
 all: clean build run
 
+# Install dependencies for Ubuntu 
+.PHONY: install-deps
+install-deps:
+	sudo apt-get install -y cmake g++ libsfml-dev
+
+# Install tools
+.PHONY: install-tools
+install-tools:
+	sudo apt-get install -y clang-format clang-tidy gdb valgrind kcachegrind 
+
+# ------
+# Build
+# ------
+.PHONY: build
+build: $(BUILD_DIR)/Makefile
+	cd $(BUILD_DIR) && $(MAKE)
+
+$(BUILD_DIR)/Makefile:
+	mkdir -p $(BUILD_DIR)
+	cd $(BUILD_DIR) && cmake ..
+
+.PHONY: run
+run:
+	cd $(BUILD_DIR) && ./$(TARGET)
+
+.PHONY: clean
 clean:
-	rm -rf build
+	rm -rf $(BUILD_DIR)
 
-build-debug:
-	mkdir -p build
-	cd build && cmake -DCMAKE_BUILD_TYPE=Debug .. && make
+# ---------
+# Formatting
+# ---------
 
+.PHONY: format
+format:
+	clang-format -i $(CPP_FILES)
+
+.PHONY: tidy
+tidy:
+	clang-tidy $(CPP_FILES) -- -std=c++17
+
+# ---------
+# Debugging
+# ---------
+.PHONY: build-debug
+build-debug: $(BUILD_DIR)/Makefile
+	cd $(BUILD_DIR) && cmake -DCMAKE_BUILD_TYPE=Debug .. && $(MAKE)
+
+.PHONY: run-debug
 run-debug:
-	cd build && gdb ./$(TARGET)
+	cd $(BUILD_DIR) && gdb ./$(TARGET)
 
-debug:
-	make build-debug
-	make run-debug
+.PHONY: debug
+debug: build-debug run-debug
 
+# Ouputs a bunch of garbage from external libraries ?
+.PHONY: valgrind
 valgrind:
-	cd build && valgrind --leak-check=full --error-limit=no ./$(TARGET) > valgrind_output.txt 2>&1
+	cd $(BUILD_DIR) && valgrind --leak-check=full --error-limit=no ./$(TARGET) > valgrind_output.txt 2>&1
 
+.PHONY: callgrind
 callgrind:
-	cd build && valgrind --tool=callgrind ./$(TARGET)
+	cd $(BUILD_DIR) && valgrind --tool=callgrind ./$(TARGET)
 
+.PHONY: callgrind-view
 callgrind-view:
-	kcachegrind ./build/callgrind.out.*
-
+	kcachegrind ./$(BUILD_DIR)/callgrind.out.*

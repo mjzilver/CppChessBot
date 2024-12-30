@@ -7,19 +7,18 @@
 #include "UI/GDisplay.h"
 
 ChessGame::ChessGame() : board() {
-    // set the board
     board.resetBoard();
 }
 
 ChessGame::~ChessGame() {
-    if (gDisplay != nullptr) delete gDisplay;
+    if (display != nullptr) delete display;
 }
 
 void ChessGame::startGame(const bool with_gui) {
-    IDisplay* display;
+    AI ai(5);
 
     if (with_gui) {
-        display = new GDisplay();
+        display = new GDisplay(&ai);
     } else {
         display = new ConsoleDisplay();
     }

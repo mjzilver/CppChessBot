@@ -24,17 +24,17 @@ endif()
 
 # Source files
 set(SOURCE_FILES
-    main.cpp
-    ChessBoard.h
-    ChessBoard.cpp
-    AI/AI.h
-    AI/AI.cpp
-    UI/GDisplay.h
-    UI/GDisplay.cpp
-    UI/ConsoleDisplay.h
-    UI/ConsoleDisplay.cpp
-    ChessGame.h
-    ChessGame.cpp
+    src/main.cpp
+    src/ChessBoard.h
+    src/ChessBoard.cpp
+    src/AI/AI.h
+    src/AI/AI.cpp
+    src/UI/GDisplay.h
+    src/UI/GDisplay.cpp
+    src/UI/ConsoleDisplay.h
+    src/UI/ConsoleDisplay.cpp
+    src/ChessGame.h
+    src/ChessGame.cpp
 )
 
 # Create the executable

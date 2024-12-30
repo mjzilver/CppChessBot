@@ -1,0 +1,14 @@
+Checks: >
+  misc-unused-parameters,
+  clang-diagnostic-unused-function,
+  clang-diagnostic-unused-variable,
+  clang-diagnostic-unused-value,
+  clang-diagnostic-unused-private-field,
+  clang-analyzer-deadcode.*,
+  clang-analyzer-unusedcode.*,
+  cppcoreguidelines-const-correctness,
+  cppcoreguidelines-avoid-const-or-ref-data-members
+WarningsAsErrors: ''
+HeaderFilterRegex: 'src/.*'
+AnalyzeTemporaryDtors: true
+FormatStyle: none
