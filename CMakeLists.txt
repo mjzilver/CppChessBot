@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
+
 project(CppChess)
 
 # Set C++ standard
@@ -34,3 +35,10 @@ endif()
 
 # Link SFML to the executable
 target_link_libraries(CppChess sfml-graphics sfml-window sfml-system)
+
+# Copy images & font to the output directory
+add_custom_command(
+    TARGET CppChess POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_SOURCE_DIR}/resources $<TARGET_FILE_DIR:CppChess>/resources
+)

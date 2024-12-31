@@ -13,10 +13,23 @@ This is a simple chess game with an AI opponent implemented in C++.
 ## Dependencies 
 - SFML (Simple and Fast Multimedia Library)
 
-## To compile and run
+## How to run
+### On Debian & Ubuntu (or WSL)
 ```bash
+    # to install SFML (if not already installed)
+    make install-deps 
+    # compile and run
     make
 ```	
+### On Windows
+Open the project in Visual Studio and build the project.
+SFML needs to be installed on your system, cmake will automatically find the library.
 
-![Chess Game](images/game.png)
+If using vcpkg, you can install SFML with the following command:
+```cmd
+    vcpkg install sfml
+```
+
+## Gameplay screenshot
+![Chess Game](resources/images/game.png)
 

@@ -8,7 +8,7 @@
 
 GDisplay::GDisplay(AI *ai) : window(sf::VideoMode(500u, 500u), "Chess Game"), squareSize(60), margin(25) {
     loadPieceTextures(pieceTextures);
-    if (!font.loadFromFile("../resources/OpenSans-Regular.ttf")) {
+    if (!font.loadFromFile("./resources/OpenSans-Regular.ttf")) {
         std::cerr << "Error loading font" << std::endl;
     }
 
@@ -118,7 +118,7 @@ void GDisplay::drawBoard(const ChessBoard &board) {
 }
 
 void GDisplay::loadPieceTextures(std::map<char, sf::Texture> &pieceTextures) const {
-    const std::string imagePath = "../images/";
+    const std::string imagePath = "./resources/images/";
 
     // Define the pieces and their corresponding filenames
     // Capital letters are white pieces, lowercase letters are black pieces
