@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "../ChessBoard.h"
+#include "../Chess/ChessBoard.h"
 
 class IDisplay {
 public:

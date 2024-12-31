@@ -1,5 +1,9 @@
 #include <string>
-#include "ChessGame.h"
+#include "AI/AI.h"
+#include "UI/ConsoleDisplay.h"
+#include "UI/GDisplay.h"
+#include "UI/IDisplay.h"
+#include "Chess/ChessBoard.h"
 
 int main(int argc, char* argv[]) {
     bool useGui = true;
@@ -12,10 +16,19 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    {
-        ChessGame game;
-        game.startGame(useGui);
+    AI ai(5);
+    IDisplay *display = nullptr;
+    ChessBoard board;
+
+    if (useGui) {
+        display = new GDisplay(&ai);
+    } else {
+        display = new ConsoleDisplay();
     }
+
+    display->drawLoop(board);
+
+    delete display;
 
     return 0;
 }

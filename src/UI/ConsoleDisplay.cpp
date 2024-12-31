@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "../PieceType.h"
+#include "../Chess/PieceType.h"
 
 void ConsoleDisplay::drawBoard(const ChessBoard &board) {
     for (int i = 0; i < 8; ++i) {

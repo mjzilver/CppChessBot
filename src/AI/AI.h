@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../ChessBoard.h"
-#include "../PieceType.h"
+#include "../Chess/ChessBoard.h"
+#include "../Chess/PieceType.h"
 
 #include <vector>
 #include <unordered_map>

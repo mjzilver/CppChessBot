@@ -4,6 +4,8 @@
 #include <cstdint>
 #include <random>
 
+#include "../Utils/ctz.h"
+
 // board functions
 void ChessBoard::resetBoard() {
     emptyBoard();
@@ -164,7 +166,7 @@ uint64_t ChessBoard::getValidMoves(const int x, const int y) const {
 
     // loop over all empty squares and check if the piece can move there
     while (emptySquares) {
-        int index = __builtin_ctzll(emptySquares);
+        int index = ctz(emptySquares);
         int newX = index % 8;
         int newY = index / 8;
 
@@ -185,7 +187,7 @@ uint64_t ChessBoard::getValidAttacks(const int x, const int y) const {
 
     // loop over all enemy pieces and check if the piece can attack them
     while (enemyPieces) {
-        int index = __builtin_ctzll(enemyPieces);
+        int index = ctz(enemyPieces);
         int enemyX = index % 8;
         int enemyY = index / 8;
 

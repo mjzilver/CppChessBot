@@ -15,26 +15,10 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g -Wall" CACHE STRING "Flags for debug builds")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Wall" CACHE STRING "Flags for release builds")
 set(CMAKE_CXX_FLAGS_PROFILE "-O3 -pg -Wall" CACHE STRING "Flags for profiling builds")
 
-# Windows-specific settings
-if(WIN32)
-    set(CMAKE_C_COMPILER "C:/mingw64/bin/gcc.exe")
-    set(CMAKE_CXX_COMPILER "C:/mingw64/bin/g++.exe")
-    set(SFML_DIR "C:/Program Files/SFML-2.6.1/lib/cmake/SFML")
-endif()
-
 # Source files
-set(SOURCE_FILES
-    src/main.cpp
-    src/ChessBoard.h
-    src/ChessBoard.cpp
-    src/AI/AI.h
-    src/AI/AI.cpp
-    src/UI/GDisplay.h
-    src/UI/GDisplay.cpp
-    src/UI/ConsoleDisplay.h
-    src/UI/ConsoleDisplay.cpp
-    src/ChessGame.h
-    src/ChessGame.cpp
+file(GLOB_RECURSE SOURCE_FILES
+    "${PROJECT_SOURCE_DIR}/src/*.cpp"
+    "${PROJECT_SOURCE_DIR}/src/*.h"
 )
 
 # Create the executable
@@ -42,6 +26,11 @@ add_executable(CppChess ${SOURCE_FILES})
 
 # Find SFML
 find_package(SFML COMPONENTS graphics window system REQUIRED)
+
+# If SFML is not found, throw an error
+if(NOT SFML_FOUND)
+    message(FATAL_ERROR "SFML was not found. Please make sure SFML is installed and available in your system's CMake module paths.")
+endif()
 
 # Link SFML to the executable
 target_link_libraries(CppChess sfml-graphics sfml-window sfml-system)

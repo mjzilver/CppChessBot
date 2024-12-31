@@ -10,7 +10,8 @@
 #include <unordered_map>
 #include <vector>
 
-#include "../ChessBoard.h"
+#include "../Chess/ChessBoard.h"
+#include "../Utils/ctz.h"
 #include "PieceSqTable.h"
 
 void AI::makeMove(ChessBoard* board, const bool isWhite) {
@@ -83,7 +84,7 @@ std::vector<Move> AI::generateMoves(const ChessBoard* const board, const bool is
     uint64_t boardPieces = board->getBoard(isWhite);
 
     while (boardPieces) {
-        int index = __builtin_ctzll(boardPieces);
+        int index = ctz(boardPieces);
         int x = index % 8;
         int y = index / 8;
 
@@ -91,7 +92,7 @@ std::vector<Move> AI::generateMoves(const ChessBoard* const board, const bool is
         auto moves = board->getValidMoves(x, y);
 
         while (attacks) {
-            int attackIndex = __builtin_ctzll(attacks);
+            int attackIndex = ctz(attacks);
             int newX = attackIndex % 8;
             int newY = attackIndex / 8;
 
@@ -103,7 +104,7 @@ std::vector<Move> AI::generateMoves(const ChessBoard* const board, const bool is
         }
 
         while (moves) {
-            int moveIndex = __builtin_ctzll(moves);
+            int moveIndex = ctz(moves);
             int newX = moveIndex % 8;
             int newY = moveIndex / 8;
 
@@ -173,7 +174,7 @@ float AI::evaluatePosition(const ChessBoard* const board) const {
     auto blackPieces = board->getBoard(false);
 
     while (whitePieces) {
-        int index = __builtin_ctzll(whitePieces);
+        int index = ctz(whitePieces);
         int x = index % 8;
         int y = index / 8;
 
@@ -186,7 +187,7 @@ float AI::evaluatePosition(const ChessBoard* const board) const {
     }
 
     while (blackPieces) {
-        int index = __builtin_ctzll(blackPieces);
+        int index = ctz(blackPieces);
         int x = index % 8;
         int y = index / 8;
 

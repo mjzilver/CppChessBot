@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <map>
 
-#include "../ChessBoard.h"
+#include "../Chess/ChessBoard.h"
 #include "IDisplay.h"
 
 #include "../AI/AI.h"
