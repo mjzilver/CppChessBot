@@ -12,9 +12,6 @@ private:
     uint64_t blackPieces = 0;
     uint64_t pieces[6] = {0, 0, 0, 0, 0, 0};
 
-    const bool WHITE = true;
-    const bool BLACK = false;
-
     uint64_t zobristTable[12][64];
     uint64_t zobristSideToMove; 
 public:
@@ -22,6 +19,9 @@ public:
         resetBoard();
         initializeZobristTable();
     }
+
+    static const bool WHITE = true;
+    static const bool BLACK = false;
     
     // board functions
     void resetBoard();

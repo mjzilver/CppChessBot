@@ -170,34 +170,25 @@ float AI::evaluatePosition(const ChessBoard* const board) const {
     float whiteScore = 0.0f;
     float blackScore = 0.0f;
 
-    auto whitePieces = board->getBoard(true);
-    auto blackPieces = board->getBoard(false);
+    auto evaluatePieces = [&](uint64_t pieces, bool isWhite) {
+        float score = 0.0f;
+        while (pieces) {
+            int index = ctz(pieces);
+            int x = index % 8;
+            int y = index / 8;
 
-    while (whitePieces) {
-        int index = ctz(whitePieces);
-        int x = index % 8;
-        int y = index / 8;
+            auto piece = board->getPieceTypeAt(x, y);
 
-        auto piece = board->getPieceTypeAt(x, y);
+            score += getValueForPiece(piece);
+            score += piecePositionScore(x, y, piece, isWhite);
 
-        whiteScore += getValueForPiece(piece);
-        whiteScore += piecePositionScore(x, y, piece, true);
+            pieces &= pieces - 1;
+        }
+        return score;
+    };
 
-        whitePieces &= whitePieces - 1;
-    }
-
-    while (blackPieces) {
-        int index = ctz(blackPieces);
-        int x = index % 8;
-        int y = index / 8;
-
-        auto piece = board->getPieceTypeAt(x, y);
-
-        blackScore += getValueForPiece(piece);
-        blackScore += piecePositionScore(x, y, piece, false);
-
-        blackPieces &= blackPieces - 1;
-    }
+    whiteScore = evaluatePieces(board->getBoard(ChessBoard::WHITE), ChessBoard::WHITE);
+    blackScore = evaluatePieces(board->getBoard(ChessBoard::BLACK), ChessBoard::BLACK);
 
     return blackScore - whiteScore;
 }

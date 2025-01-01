@@ -12,35 +12,35 @@ void ChessBoard::resetBoard() {
 
     // set pawns
     for (int i = 0; i < 8; ++i) {
-        setPiece(i, 1, PAWN, false);
-        setPiece(i, 6, PAWN, true);
+        setPiece(i, 1, PAWN, BLACK);
+        setPiece(i, 6, PAWN, WHITE);
     }
 
     // set rooks
-    setPiece(0, 0, ROOK, false);
-    setPiece(7, 0, ROOK, false);
-    setPiece(0, 7, ROOK, true);
-    setPiece(7, 7, ROOK, true);
+    setPiece(0, 0, ROOK, BLACK);
+    setPiece(7, 0, ROOK, BLACK);
+    setPiece(0, 7, ROOK, WHITE);
+    setPiece(7, 7, ROOK, WHITE);
 
     // set knights
-    setPiece(1, 0, KNIGHT, false);
-    setPiece(6, 0, KNIGHT, false);
-    setPiece(1, 7, KNIGHT, true);
-    setPiece(6, 7, KNIGHT, true);
+    setPiece(1, 0, KNIGHT, BLACK);
+    setPiece(6, 0, KNIGHT, BLACK);
+    setPiece(1, 7, KNIGHT, WHITE);
+    setPiece(6, 7, KNIGHT, WHITE);
 
     // set bishops
-    setPiece(2, 0, BISHOP, false);
-    setPiece(5, 0, BISHOP, false);
-    setPiece(2, 7, BISHOP, true);
-    setPiece(5, 7, BISHOP, true);
+    setPiece(2, 0, BISHOP, BLACK);
+    setPiece(5, 0, BISHOP, BLACK);
+    setPiece(2, 7, BISHOP, WHITE);
+    setPiece(5, 7, BISHOP, WHITE);
 
     // set queens
-    setPiece(3, 0, QUEEN, false);
-    setPiece(3, 7, QUEEN, true);
+    setPiece(3, 0, QUEEN, BLACK);
+    setPiece(3, 7, QUEEN, WHITE);
 
     // set kings
-    setPiece(4, 0, KING, false);
-    setPiece(4, 7, KING, true);
+    setPiece(4, 0, KING, BLACK);
+    setPiece(4, 7, KING, WHITE);
 
     _gameOver = false;
 }

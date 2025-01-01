@@ -15,7 +15,7 @@ struct Move {
 
 class AI {
 public:
-    AI(int maxDepth) : maxDepth(maxDepth) {}
+    AI(int maxDepth, int timeLimit) : maxDepth(maxDepth), timeLimit(timeLimit) {}
 
     AI(const AI&) = delete;
     AI& operator=(const AI&) = delete;
@@ -24,7 +24,7 @@ public:
 
 private:
     const int maxDepth;
-    const int timeLimit = 2000; 
+    const int timeLimit; 
     uint64_t cacheHitCount = 0;
 
     // move cache

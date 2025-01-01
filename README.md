@@ -8,7 +8,7 @@ This is a simple chess game with an AI opponent implemented in C++.
 - [ ] `Supports special chess rules (en passant, castling, pawn promotion)`
 - [X] `Command-line interface`
 - [X] `Graphical user interface`
-- [ ] `Configurable AI difficulty and time limit`
+- [X] `Configurable AI difficulty and time limit`
 - [ ] `Cache pruning to reduce memory usage`
 
 ## Dependencies 
