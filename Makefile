@@ -32,6 +32,10 @@ $(BUILD_DIR)/Makefile:
 run:
 	cd $(BUILD_DIR) && ./$(TARGET)
 
+.PHONY: run-console
+run-console:
+	cd $(BUILD_DIR) && ./$(TARGET) -nogui
+
 .PHONY: clean
 clean:
 	rm -rf $(BUILD_DIR)

@@ -1,6 +1,7 @@
 #include "ConsoleDisplay.h"
 
 #include <iostream>
+#include <thread>
 
 #include "../Chess/PieceType.h"
 
@@ -53,6 +54,19 @@ std::string ConsoleDisplay::receiveInput() {
 void ConsoleDisplay::drawLoop(ChessBoard &board) {
     while (true) {
         handleInput(board);
+
+        static bool isAIThreadRunning = false;
+        if (!isCurrentPlayerWhite && !isAIThreadRunning) {
+            isAIThreadRunning = true;
+            std::thread aiThread([&]() {
+                ai->makeMove(&board, false);
+                isCurrentPlayerWhite = true;
+                isAIThreadRunning = false;
+                drawBoard(board);
+            });
+
+            aiThread.detach();
+        }
     }
 
     std::cout << "Game over!" << std::endl;
@@ -87,13 +101,6 @@ void ConsoleDisplay::handleInput(ChessBoard &board) {
         moveInputPlayer1 = receiveInput();
         drawBoard(board);
     }
-    drawBoard(board);
-
-    std::cout << "Player 2's turn (black): " << std::endl;
-    std::string moveInputPlayer2 = receiveInput();
-    while (!makeMove(board, moveInputPlayer2)) {
-        moveInputPlayer2 = receiveInput();
-        drawBoard(board);
-    }
+    isCurrentPlayerWhite = false;
     drawBoard(board);
 }

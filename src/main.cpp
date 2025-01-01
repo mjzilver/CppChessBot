@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
     if (useGui) {
         display = new GDisplay(&ai);
     } else {
-        display = new ConsoleDisplay();
+        display = new ConsoleDisplay(&ai);
     }
 
     display->drawLoop(board);
