@@ -18,10 +18,16 @@ public:
     void handleInput(ChessBoard &board) override;
 
     struct SelectionPiece {
-        int x;
-        int y;
-        char symbol;
-        bool isWhite;
+        int x, y = 0;
+        char symbol = EMPTY_SYMBOL;
+        bool isWhite = true;
+
+        void clear() {
+            x = y = 0;
+            symbol = EMPTY_SYMBOL;
+        }
+        
+        bool isEmpty() const { return symbol == EMPTY_SYMBOL; }
 
         bool operator==(const SelectionPiece &other) const {
             return x == other.x && y == other.y && symbol == other.symbol && isWhite == other.isWhite;
@@ -34,7 +40,7 @@ private:
     int margin;
     std::map<char, sf::Texture> pieceTextures;
     sf::Font font;
-    SelectionPiece selectedPiece = { 0, 0, ' ', true};
+    SelectionPiece selectedPiece;
     bool isCurrentPlayerWhite = true;
 
     AI *ai;

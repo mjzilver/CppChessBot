@@ -7,7 +7,7 @@ CPP_FILES := $(wildcard $(SRC_DIR)/*.cpp) $(wildcard $(SRC_DIR)/**/*.cpp)
 .PHONY: all
 all: clean build run
 
-# Install dependencies for Ubuntu 
+# Install dependencies for Debain/Ubuntu 
 .PHONY: install-deps
 install-deps:
 	sudo apt-get install -y cmake g++ libsfml-dev

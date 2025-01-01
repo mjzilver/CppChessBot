@@ -9,7 +9,7 @@
 GDisplay::GDisplay(AI *ai) : window(sf::VideoMode(500u, 500u), "Chess Game"), squareSize(60), margin(25) {
     loadPieceTextures(pieceTextures);
     if (!font.loadFromFile("./resources/OpenSans-Regular.ttf")) {
-        std::cerr << "Error loading font" << std::endl;
+        throw std::runtime_error("Error loading font");
     }
 
     window.setView(window.getDefaultView());
@@ -71,42 +71,42 @@ void GDisplay::drawBoard(const ChessBoard &board) {
         window.draw(fileLabel);
     }
 
-    for (int i = 0; i < 8; ++i) {
-        for (int j = 0; j < 8; ++j) {
-            if ((i + j) % 2 == 0) {
-                drawSquare(j, i, sf::Color(230, 230, 230));
+    for (int y = 0; y < 8; ++y) {
+        for (int x = 0; x < 8; ++x) {
+            if ((y + x) % 2 == 0) {
+                drawSquare(x, y, sf::Color(230, 230, 230));
             } else {
-                drawSquare(j, i, sf::Color(75, 75, 75));
+                drawSquare(x, y, sf::Color(75, 75, 75));
             }
 
             // if selected piece is not null, draw possible moves
-            if (selectedPiece.symbol != ' ') {
-                if (board.getPieceSymbol(j, i) != ' ' && board.isValidAttack(selectedPiece.x, selectedPiece.y, j, i)) {
-                    drawSquare(j, i, sf::Color(255, 0, 0, 100));
-                } else if (board.isValidMove(selectedPiece.x, selectedPiece.y, j, i)) {
-                    drawCircle(j, i, 0.5, sf::Color(0, 255, 0, 100));
+            if (!selectedPiece.isEmpty()) {
+                if (board.isSquareTaken(x, y) && board.isValidAttack(selectedPiece.x, selectedPiece.y, x, y)) {
+                    drawSquare(x, y, sf::Color(255, 0, 0, 100));
+                } else if (board.isValidMove(selectedPiece.x, selectedPiece.y, x, y)) {
+                    drawCircle(x, y, 0.5, sf::Color(0, 255, 0, 100));
                 }
             }
 
             // draw piece on square
-            char piece = board.getPieceSymbol(j, i);
-            bool isWhite = board.isPieceAt(j, i, true);
+            char piece = board.getPieceSymbol(x, y);
+            bool isWhite = board.isPieceAt(x, y, true);
 
-            if (piece == ' ') continue;
+            if (piece == EMPTY_SYMBOL) continue;
 
             char pieceSymbol = isWhite ? toupper(piece) : tolower(piece);
 
             auto it = pieceTextures.find(pieceSymbol);
             if (it != pieceTextures.end()) {
                 // draw a circle around the selected piece
-                SelectionPiece currentPiece = {j, i, pieceSymbol, isWhite};
+                SelectionPiece currentPiece = {x, y, pieceSymbol, isWhite};
 
                 if (currentPiece == selectedPiece) {
-                    drawCircleOutline(j, i, 0.8, sf::Color(0, 0, 255, 100));
+                    drawCircleOutline(x, y, 0.8, sf::Color(0, 0, 255, 100));
                 }
 
                 sf::Sprite pieceSprite(it->second);
-                pieceSprite.setPosition(j * squareSize + margin, i * squareSize);
+                pieceSprite.setPosition(x * squareSize + margin, y * squareSize);
                 window.draw(pieceSprite);
             } else {
                 std::cerr << "Texture not found for piece " << piece << std::endl;
@@ -134,7 +134,7 @@ void GDisplay::loadPieceTextures(std::map<char, sf::Texture> &pieceTextures) con
         if (texture.loadFromFile(imagePath + filename)) {
             pieceTextures[piece] = texture;
         } else {
-            std::cerr << "Error loading texture for piece " << piece << std::endl;
+            throw std::runtime_error("Error loading texture for piece " + std::string(1, piece));
         }
     }
 }
@@ -191,7 +191,7 @@ void GDisplay::handleMouseClick(sf::Event::MouseButtonEvent &mouse, ChessBoard &
 
         handleValidChessboardClick(colIndex, rowIndex, board);
     } else if (mouse.button == sf::Mouse::Right) {
-        selectedPiece.symbol = ' ';
+        selectedPiece.clear();
     }
 }
 
@@ -199,9 +199,9 @@ void GDisplay::handleValidChessboardClick(int colIndex, int rowIndex, ChessBoard
     SelectionPiece clickedPiece = {colIndex, rowIndex, board.getPieceSymbol(colIndex, rowIndex),
                                    board.isPieceAt(colIndex, rowIndex, true)};
 
-    if (selectedPiece.symbol != ' ' && isCurrentPlayerWhite && selectedPiece.isWhite) {
+    if (!selectedPiece.isEmpty() && isCurrentPlayerWhite && selectedPiece.isWhite) {
         if (board.movePiece(selectedPiece.x, selectedPiece.y, colIndex, rowIndex)) {
-            selectedPiece.symbol = ' ';
+            selectedPiece.clear();
             isCurrentPlayerWhite = !isCurrentPlayerWhite;
             return;
         }

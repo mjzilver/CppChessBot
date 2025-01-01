@@ -41,6 +41,8 @@ public:
     bool isPieceAt(const int x, const int y) const;
     bool isPieceAt(const int x, const int y, const bool isWhite) const;
     bool isPieceAt(const int x, const int y, const PieceType pieceType) const;
+    bool isSquareEmpty(const int x, const int y) const { return !isPieceAt(x, y); }
+    bool isSquareTaken(const int x, const int y) const { return isPieceAt(x, y); }
     bool getPieceColor(const int x, const int y) const;
     bool removePieceAt(const int x, const int y);
     PieceType getPieceTypeAt(const int x, const int y) const;

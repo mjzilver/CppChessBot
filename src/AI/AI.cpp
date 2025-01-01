@@ -28,7 +28,7 @@ void AI::makeMove(ChessBoard* board, const bool isWhite) {
 
 Move AI::findBestMove(const ChessBoard* const board, const bool isWhite) {
     float bestScore = -10000;
-    Move bestMove {};
+    Move bestMove{};
 
     auto moves = generateMoves(board, isWhite);
 

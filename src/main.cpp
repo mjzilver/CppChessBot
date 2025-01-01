@@ -1,9 +1,10 @@
 #include <string>
+
 #include "AI/AI.h"
+#include "Chess/ChessBoard.h"
 #include "UI/ConsoleDisplay.h"
 #include "UI/GDisplay.h"
 #include "UI/IDisplay.h"
-#include "Chess/ChessBoard.h"
 
 int main(int argc, char* argv[]) {
     bool useGui = true;
@@ -17,7 +18,7 @@ int main(int argc, char* argv[]) {
     }
 
     AI ai(5);
-    IDisplay *display = nullptr;
+    IDisplay* display = nullptr;
     ChessBoard board;
 
     if (useGui) {

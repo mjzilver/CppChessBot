@@ -56,15 +56,7 @@ void ChessBoard::emptyBoard() {
     pieces[KING] = 0;
 }
 
-char ChessBoard::getPieceSymbol(const int x, const int y) const {
-    if (isPieceAt(x, y, PAWN)) return 'P';
-    if (isPieceAt(x, y, ROOK)) return 'R';
-    if (isPieceAt(x, y, KNIGHT)) return 'N';
-    if (isPieceAt(x, y, BISHOP)) return 'B';
-    if (isPieceAt(x, y, QUEEN)) return 'Q';
-    if (isPieceAt(x, y, KING)) return 'K';
-    return ' ';
-}
+char ChessBoard::getPieceSymbol(const int x, const int y) const { return pieceTypeToSymbol(getPieceTypeAt(x, y)); }
 
 // piece functions
 void ChessBoard::setPiece(const int x, const int y, const PieceType pieceType, const bool isWhite) {
