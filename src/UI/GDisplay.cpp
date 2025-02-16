@@ -6,11 +6,13 @@
 
 #include "../AI/AI.h"
 
-GDisplay::GDisplay(AI *ai) : window(sf::VideoMode(500u, 500u), "Chess Game"), squareSize(60), margin(25) {
+GDisplay::GDisplay(AI *ai) : squareSize(60), margin(25) {
     loadPieceTextures(pieceTextures);
     if (!font.loadFromFile("./resources/OpenSans-Regular.ttf")) {
         throw std::runtime_error("Error loading font");
     }
+
+    window.create(sf::VideoMode(500, 500), "Chess Game", sf::Style::Titlebar | sf::Style::Close);
 
     window.setView(window.getDefaultView());
     window.setFramerateLimit(60);

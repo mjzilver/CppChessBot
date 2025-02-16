@@ -24,7 +24,7 @@ install-tools:
 build: $(BUILD_DIR)/Makefile
 	cd $(BUILD_DIR) && $(MAKE)
 
-$(BUILD_DIR)/Makefile:
+$(BUILD_DIR)/Makefile: CMakeLists.txt
 	mkdir -p $(BUILD_DIR)
 	cd $(BUILD_DIR) && cmake ..
 

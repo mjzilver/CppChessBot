@@ -25,16 +25,25 @@ file(GLOB_RECURSE SOURCE_FILES
 # Create the executable
 add_executable(CppChess ${SOURCE_FILES})
 
-# Find SFML
-find_package(SFML COMPONENTS graphics window system REQUIRED)
+# SFML Setup using FetchContent
+include(FetchContent)
 
-# If SFML is not found, throw an error
-if(NOT SFML_FOUND)
-    message(FATAL_ERROR "SFML was not found. Please make sure SFML is installed and available in your system's CMake module paths.")
-endif()
+# Fetch SFML 2.6.1 and build it
+FetchContent_Declare(SFML
+    GIT_REPOSITORY https://github.com/SFML/SFML.git
+    GIT_TAG 2.6.1
+    GIT_SHALLOW ON
+    EXCLUDE_FROM_ALL
+    SYSTEM)
+
+FetchContent_MakeAvailable(SFML)
 
 # Link SFML to the executable
-target_link_libraries(CppChess sfml-graphics sfml-window sfml-system)
+target_link_libraries(CppChess PRIVATE
+    sfml-graphics
+    sfml-window
+    sfml-system
+)
 
 # Copy images & font to the output directory
 add_custom_command(
