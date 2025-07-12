@@ -1,10 +1,15 @@
 #include "AI.h"
 
+#include <atomic>
+#include <boost/asio/post.hpp>
+#include <boost/asio/thread_pool.hpp>
 #include <chrono>
+#include <condition_variable>
 #include <cstdlib>
 #include <future>
 #include <iostream>
 #include <limits>
+#include <mutex>
 #include <random>
 #include <thread>
 #include <unordered_map>
@@ -27,7 +32,7 @@ void AI::makeMove(ChessBoard* board, const bool isWhite) {
 }
 
 Move AI::findBestMove(const ChessBoard* const board, const bool isWhite) {
-    float bestScore = -10000;
+    float bestScore = -10000.0f;
     Move bestMove{};
 
     auto moves = generateMoves(board, isWhite);
@@ -36,32 +41,43 @@ Move AI::findBestMove(const ChessBoard* const board, const bool isWhite) {
     std::cout << "Cache hit count: " << cacheHitCount << std::endl;
     cacheHitCount = 0;
 
-    auto evaluateMove = [&](const Move& move) {
-        ChessBoard* newBoard = new ChessBoard(*board);
-        newBoard->movePiece(move.fromX, move.fromY, move.toX, move.toY);
+    if (moves.empty()) return bestMove;
 
-        float score = minimax(newBoard, maxDepth, -10000, 10000, isWhite, !isWhite);
+    std::mutex mutex;
+    std::atomic<int> remainingTasks(moves.size());
+    std::condition_variable cv;
+    std::mutex cv_mutex;
 
-        delete newBoard;
-        return score;
-    };
-
-    std::vector<std::future<float>> futures;
+    boost::asio::thread_pool pool(std::thread::hardware_concurrency());
 
     for (const auto& move : moves) {
-        futures.push_back(std::async(std::launch::async, evaluateMove, move));
+        boost::asio::post(pool, [&, move]() {
+            ChessBoard* newBoard = new ChessBoard(*board);
+            newBoard->movePiece(move.fromX, move.fromY, move.toX, move.toY);
+            float score = minimax(newBoard, maxDepth, -10000.0f, 10000.0f, isWhite, !isWhite);
+            delete newBoard;
+
+            {
+                std::lock_guard<std::mutex> lock(mutex);
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestMove = move;
+                }
+            }
+
+            if (--remainingTasks == 0) {
+                std::lock_guard<std::mutex> lock(cv_mutex);
+                cv.notify_one();
+            }
+        });
     }
 
-    std::cout << "Amount of futures: " << futures.size() << std::endl;
-
-    for (size_t i = 0; i < moves.size(); ++i) {
-        float score = futures[i].get();
-
-        if (score > bestScore) {
-            bestScore = score;
-            bestMove = moves[i];
-        }
+    {
+        std::unique_lock<std::mutex> lock(cv_mutex);
+        cv.wait(lock, [&]() { return remainingTasks == 0; });
     }
+
+    pool.join();
 
     std::cout << "Best score: " << bestScore << std::endl;
 

@@ -6,9 +6,9 @@ project(CppChess)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Set default build type to Debug
+# Set default build type to Release
 if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type" FORCE)
+    set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
 endif()
 
 # Define build-specific flags
@@ -37,6 +37,11 @@ FetchContent_Declare(SFML
     SYSTEM)
 
 FetchContent_MakeAvailable(SFML)
+
+# Boost setup
+find_package(Boost REQUIRED COMPONENTS thread system)
+target_include_directories(CppChess PRIVATE ${Boost_INCLUDE_DIRS})
+target_link_libraries(CppChess PRIVATE Boost::thread Boost::system)
 
 # Link SFML to the executable
 target_link_libraries(CppChess PRIVATE
