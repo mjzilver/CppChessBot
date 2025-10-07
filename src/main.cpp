@@ -5,7 +5,7 @@
 #include "UI/GDisplay.h"
 #include "UI/IDisplay.h"
 
-int main(int argc, char* argv[]) {
+int main() {
     Config& config = Config::getInstance();
 
     AI ai(config.difficulty, config.timeLimit);

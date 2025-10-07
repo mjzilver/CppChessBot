@@ -3,10 +3,9 @@
 #include <SFML/Graphics.hpp>
 #include <map>
 
+#include "../AI/AI.h"
 #include "../Chess/ChessBoard.h"
 #include "IDisplay.h"
-
-#include "../AI/AI.h"
 
 class GDisplay : public IDisplay {
 public:
@@ -26,7 +25,7 @@ public:
             x = y = 0;
             symbol = EMPTY_SYMBOL;
         }
-        
+
         bool isEmpty() const { return symbol == EMPTY_SYMBOL; }
 
         bool operator==(const SelectionPiece &other) const {

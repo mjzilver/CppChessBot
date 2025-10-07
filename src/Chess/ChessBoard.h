@@ -6,14 +6,15 @@
 
 class ChessBoard {
 private:
-    bool _gameOver = false;
+    bool gameOver = false;
 
     uint64_t whitePieces = 0;
     uint64_t blackPieces = 0;
     uint64_t pieces[6] = {0, 0, 0, 0, 0, 0};
 
     uint64_t zobristTable[12][64];
-    uint64_t zobristSideToMove; 
+    uint64_t zobristSideToMove;
+
 public:
     ChessBoard() {
         resetBoard();
@@ -22,7 +23,7 @@ public:
 
     static const bool WHITE = true;
     static const bool BLACK = false;
-    
+
     // board functions
     void resetBoard();
     void emptyBoard();

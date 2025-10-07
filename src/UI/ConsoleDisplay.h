@@ -1,7 +1,7 @@
 #pragma once
 
-#include "IDisplay.h"
 #include "../AI/AI.h"
+#include "IDisplay.h"
 
 class ConsoleDisplay : public IDisplay {
 public:
@@ -11,6 +11,7 @@ public:
     void drawLoop(ChessBoard& board) override;
     bool makeMove(ChessBoard& board, const std::string& moveInput);
     void handleInput(ChessBoard& board) override;
+
 private:
     AI* ai;
     bool isCurrentPlayerWhite = true;

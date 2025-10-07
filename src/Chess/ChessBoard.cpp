@@ -42,7 +42,7 @@ void ChessBoard::resetBoard() {
     setPiece(4, 0, KING, BLACK);
     setPiece(4, 7, KING, WHITE);
 
-    _gameOver = false;
+    gameOver = false;
 }
 
 void ChessBoard::emptyBoard() {

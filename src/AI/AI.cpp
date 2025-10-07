@@ -1,14 +1,11 @@
 #include "AI.h"
 
 #include <atomic>
-#include <boost/asio/post.hpp>
-#include <boost/asio/thread_pool.hpp>
 #include <chrono>
 #include <condition_variable>
 #include <cstdlib>
 #include <iostream>
 #include <mutex>
-#include <thread>
 #include <unordered_map>
 #include <vector>
 
@@ -17,14 +14,14 @@
 #include "PieceSqTable.h"
 
 void AI::makeMove(ChessBoard* board, const bool isWhite) {
-    start_time = std::chrono::steady_clock::now();
+    startTime = std::chrono::steady_clock::now();
     Move bestMove = findBestMove(board, isWhite);
 
     if (!board->movePiece(bestMove.fromX, bestMove.fromY, bestMove.toX, bestMove.toY)) {
         std::cout << "AI move failed, this should not happen" << std::endl;
     }
-    auto end_time = std::chrono::steady_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
+    auto endTime = std::chrono::steady_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
     std::cout << "Time to find best move " << duration.count() << " milliseconds\n";
 }
 
@@ -43,12 +40,10 @@ Move AI::findBestMove(const ChessBoard* const board, const bool isWhite) {
     std::mutex mutex;
     std::atomic<int> remainingTasks(moves.size());
     std::condition_variable cv;
-    std::mutex cv_mutex;
-
-    boost::asio::thread_pool pool(std::thread::hardware_concurrency());
+    std::mutex cvMutex;
 
     for (const auto& move : moves) {
-        boost::asio::post(pool, [&, move]() {
+        threadpool.submit([&, move]() {
             ChessBoard* newBoard = new ChessBoard(*board);
             newBoard->movePiece(move.fromX, move.fromY, move.toX, move.toY);
             float score = minimax(newBoard, maxDepth, -10000.0f, 10000.0f, isWhite, !isWhite);
@@ -63,18 +58,18 @@ Move AI::findBestMove(const ChessBoard* const board, const bool isWhite) {
             }
 
             if (--remainingTasks == 0) {
-                std::lock_guard<std::mutex> lock(cv_mutex);
+                std::lock_guard<std::mutex> lock(cvMutex);
                 cv.notify_one();
             }
         });
     }
 
     {
-        std::unique_lock<std::mutex> lock(cv_mutex);
+        std::unique_lock<std::mutex> lock(cvMutex);
         cv.wait(lock, [&]() { return remainingTasks == 0; });
     }
 
-    pool.join();
+    threadpool.join();
 
     std::cout << "Best score: " << bestScore << std::endl;
 
@@ -144,9 +139,8 @@ float AI::minimax(ChessBoard* const board, const int depth, float alpha, float b
         return evaluatePosition(board);
     }
 
-    // check if time limit has been reached
-    auto current_time = std::chrono::steady_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - start_time);
+    auto currentTime = std::chrono::steady_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - startTime);
     if (duration.count() > timeLimit) {
         return evaluatePosition(board);
     }
@@ -239,7 +233,7 @@ float AI::getValueForPiece(const PieceType piece) const {
         case QUEEN:
             return 200.0f;
         case KING:
-            return 1000.0f;
+            return 2000.0f;
         default:
             return 0.0f;
     }

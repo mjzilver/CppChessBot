@@ -1,6 +1,6 @@
 #pragma once
-#include <cstdint>
 #include <cassert>
+#include <cstdint>
 
 // Basically the same as __builtin_ctzll
 constexpr unsigned int ctz(uint64_t x) {

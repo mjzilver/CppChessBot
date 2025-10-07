@@ -6,9 +6,9 @@
 #include <string>
 
 void Config::loadConfigFile() {
-    std::ifstream file(CONFIG_FILE);
+    std::ifstream file(configFile);
     if (!file.is_open()) {
-        std::cerr << "Error: Could not open config file " << CONFIG_FILE << "\n";
+        std::cerr << "Error: Could not open config file " << configFile << "\n";
         return;
     }
 

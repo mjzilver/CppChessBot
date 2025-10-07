@@ -31,10 +31,6 @@ FetchContent_Declare(SFML
 
 FetchContent_MakeAvailable(SFML)
 
-find_package(Boost REQUIRED COMPONENTS thread system)
-target_include_directories(CppChess PRIVATE ${Boost_INCLUDE_DIRS})
-target_link_libraries(CppChess PRIVATE Boost::thread Boost::system)
-
 target_link_libraries(CppChess PRIVATE
     sfml-graphics
     sfml-window

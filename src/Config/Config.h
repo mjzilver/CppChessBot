@@ -1,8 +1,6 @@
 #pragma once
 
 #include <string>
-#include <map>
-#include <iostream>
 
 class Config {
 public:
@@ -19,13 +17,13 @@ public:
 
     Config(const Config &) = delete;
     Config &operator=(const Config &) = delete;
+
 private:
     Config() { loadConfigFile(); }
 
     void loadConfigFile();
 
-    const std::string CONFIG_FILE = "./resources/settings.ini";
+    const std::string configFile = "./resources/settings.ini";
 
     static void trim(std::string &str);
 };
-
