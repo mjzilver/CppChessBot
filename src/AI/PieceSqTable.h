@@ -1,4 +1,5 @@
 #pragma once
+// clang-format off
 
 constexpr static int PAWN_TABLE[2][64] = {
     {
