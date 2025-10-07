@@ -1,5 +1,3 @@
-#include <string>
-
 #include "AI/AI.h"
 #include "Chess/ChessBoard.h"
 #include "Config/Config.h"

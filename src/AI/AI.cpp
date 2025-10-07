@@ -6,11 +6,8 @@
 #include <chrono>
 #include <condition_variable>
 #include <cstdlib>
-#include <future>
 #include <iostream>
-#include <limits>
 #include <mutex>
-#include <random>
 #include <thread>
 #include <unordered_map>
 #include <vector>

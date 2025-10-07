@@ -3,19 +3,8 @@ BUILD_DIR = build
 SRC_DIR = src
 CPP_FILES := $(wildcard $(SRC_DIR)/*.cpp) $(wildcard $(SRC_DIR)/**/*.cpp)
 
-# Default target
 .PHONY: all
 all: clean build run
-
-# Install dependencies for Debain/Ubuntu 
-.PHONY: install-deps
-install-deps:
-	sudo apt-get install -y cmake g++ libsfml-dev libboost-all-dev
-
-# Install tools
-.PHONY: install-tools
-install-tools:
-	sudo apt-get install -y clang-format clang-tidy gdb valgrind kcachegrind 
 
 # ------
 # Build
@@ -66,7 +55,6 @@ run-debug:
 .PHONY: debug
 debug: build-debug run-debug
 
-# Ouputs a bunch of garbage from external libraries ?
 .PHONY: valgrind
 valgrind:
 	cd $(BUILD_DIR) && valgrind --leak-check=full --error-limit=no ./$(TARGET) > valgrind_output.txt 2>&1
